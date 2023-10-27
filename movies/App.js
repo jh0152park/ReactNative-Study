@@ -1,21 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import { WebView } from "react-native-webview";
+import { Text } from "react-native";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+async function delay_splash() {
+    await SplashScreen.preventAutoHideAsync();
+    await sleep(3000);
+    await SplashScreen.hideAsync();
+}
+
+export default function App() {
+    useEffect(() => {
+        delay_splash();
+    }, []);
+
+    // return <WebView source={{ uri: "https://www.naver.com" }} />;
+    return <Text>Loading Done</Text>;
+}
