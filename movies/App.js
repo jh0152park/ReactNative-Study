@@ -1,12 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { WebView } from "react-native-webview";
-import { Text, View, Image } from "react-native";
+import { Text, View, Image, useColorScheme } from "react-native";
 import { Asset, useAssets } from "expo-asset";
 import { Ionicons } from "@expo/vector-icons";
 
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+    NavigationContainer,
+    DarkTheme,
+    DefaultTheme,
+} from "@react-navigation/native";
 import Tabs from "./navigation/Tabs";
 
 function loadFonts(fonts) {
@@ -38,6 +42,7 @@ export default function App() {
     //         <Text>Loading done</Text>
     //     </View>
     // );
+    const darkMode = useColorScheme() === "dark";
     const [appIsReady, setAppIsReady] = useState(false);
 
     async function startLoading() {
@@ -69,7 +74,7 @@ export default function App() {
 
     return (
         <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
-            <NavigationContainer>
+            <NavigationContainer theme={darkMode ? DarkTheme : DefaultTheme}>
                 <Tabs />
             </NavigationContainer>
         </View>
