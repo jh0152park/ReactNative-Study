@@ -33,7 +33,7 @@ export default function App() {
 
     return (
         <View>
-            <Text>Loading done...</Text>
+            <Text>Loading done</Text>
         </View>
     );
     // const [appIsReady, setAppIsReady] = useState(false);
