@@ -9,6 +9,7 @@ export default function RootNavigation() {
         <Nav.Navigator
             screenOptions={{
                 headerShown: false,
+                presentation: "modal",
             }}
         >
             <Nav.Screen name="Tabs" component={Tabs} />
