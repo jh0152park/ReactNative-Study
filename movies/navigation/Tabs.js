@@ -32,6 +32,7 @@ export default function Tabs() {
                     fontSize: 12,
                     fontWeight: "bold",
                 },
+                // headerShown: false,
             }}
         >
             <Tab.Screen
