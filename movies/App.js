@@ -12,6 +12,7 @@ import {
     DefaultTheme,
 } from "@react-navigation/native";
 import Tabs from "./navigation/Tabs";
+import Stack from "./navigation/Stack";
 
 function loadFonts(fonts) {
     return fonts.map((font) => Font.loadAsync(font));
@@ -75,7 +76,8 @@ export default function App() {
     return (
         <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
             <NavigationContainer theme={darkMode ? DarkTheme : DefaultTheme}>
-                <Tabs />
+                {/* <Tabs /> */}
+                <Stack />
             </NavigationContainer>
         </View>
     );
