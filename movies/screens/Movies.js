@@ -1,16 +1,19 @@
 import react from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 
-export default function Movies() {
+export default function Movies({ navigation: { navigate } }) {
     return (
-        <View
+        <TouchableOpacity
             style={{
                 flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
             }}
+            onPress={() => {
+                navigate("Stack", { screen: "Three" });
+            }}
         >
             <Text>Movies</Text>
-        </View>
+        </TouchableOpacity>
     );
 }
