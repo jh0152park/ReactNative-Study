@@ -14,6 +14,8 @@ import {
 import Tabs from "./navigation/Tabs";
 import Stack from "./navigation/Stack";
 import RootNavigation from "./navigation/Root";
+import { ThemeProvider } from "styled-components/native";
+import { darkMode, lightMode } from "./Styled";
 
 function loadFonts(fonts) {
     return fonts.map((font) => Font.loadAsync(font));
@@ -30,21 +32,7 @@ function loadAssets(assets) {
 }
 
 export default function App() {
-    // const [assets] = useAssets([require("./smile.jpg")]);
-    // const [fonts] = Font.useFonts(Ionicons.font);
-
-    // if (!assets || !fonts) {
-    //     SplashScreen.preventAutoHideAsync();
-    // } else {
-    //     SplashScreen.hideAsync();
-    // }
-
-    // return (
-    //     <View>
-    //         <Text>Loading done</Text>
-    //     </View>
-    // );
-    const darkMode = useColorScheme() === "dark";
+    const isDarkMode = useColorScheme() === "dark";
     const [appIsReady, setAppIsReady] = useState(false);
 
     async function startLoading() {
@@ -75,10 +63,14 @@ export default function App() {
     if (!appIsReady) return null;
 
     return (
-        <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
-            <NavigationContainer theme={darkMode ? DarkTheme : DefaultTheme}>
-                <RootNavigation />
-            </NavigationContainer>
-        </View>
+        <ThemeProvider theme={isDarkMode ? darkMode : lightMode}>
+            <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+                <NavigationContainer
+                    theme={isDarkMode ? DarkTheme : DefaultTheme}
+                >
+                    <RootNavigation />
+                </NavigationContainer>
+            </View>
+        </ThemeProvider>
     );
 }
