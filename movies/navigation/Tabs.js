@@ -6,11 +6,12 @@ import Search from "../screens/Search";
 import { useColorScheme } from "react-native";
 import { COLOR } from "../colors";
 import { Ionicons } from "@expo/vector-icons";
+import { darkMode, lightMode } from "../Styled";
 
 const Tab = createBottomTabNavigator();
 
 export default function Tabs() {
-    //  const darkMode = useColorScheme() === "dark";
+    const isDarkMode = useColorScheme() === "dark";
 
     return (
         <Tab.Navigator
@@ -27,6 +28,9 @@ export default function Tabs() {
             //         color: darkMode ? COLOR.WHITE : COLOR.BLACK,
             //     },
             // }}
+            sceneContainerStyle={{
+                backgroundColor: isDarkMode ? darkMode : lightMode,
+            }}
             screenOptions={{
                 tabBarLabelStyle: {
                     fontSize: 12,
