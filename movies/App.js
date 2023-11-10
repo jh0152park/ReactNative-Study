@@ -16,6 +16,7 @@ import Stack from "./navigation/Stack";
 import RootNavigation from "./navigation/Root";
 import { ThemeProvider } from "styled-components/native";
 import { darkMode, lightMode } from "./Styled";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 function loadFonts(fonts) {
     return fonts.map((font) => Font.loadAsync(font));
@@ -30,6 +31,8 @@ function loadAssets(assets) {
         }
     });
 }
+
+const queryClient = new QueryClient();
 
 export default function App() {
     const isDarkMode = useColorScheme() === "dark";
@@ -64,13 +67,15 @@ export default function App() {
 
     return (
         <ThemeProvider theme={isDarkMode ? darkMode : lightMode}>
-            <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
-                <NavigationContainer
-                    theme={isDarkMode ? DarkTheme : DefaultTheme}
-                >
-                    <RootNavigation />
-                </NavigationContainer>
-            </View>
+            <QueryClientProvider client={queryClient}>
+                <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+                    <NavigationContainer
+                        theme={isDarkMode ? DarkTheme : DefaultTheme}
+                    >
+                        <RootNavigation />
+                    </NavigationContainer>
+                </View>
+            </QueryClientProvider>
         </ThemeProvider>
     );
 }
