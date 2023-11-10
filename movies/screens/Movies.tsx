@@ -1,6 +1,7 @@
 import react from "react";
 import styled from "styled-components/native";
 import { View, Text, TouchableOpacity } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 const Button = styled.TouchableOpacity`
     flex: 1;
@@ -13,7 +14,7 @@ const Title = styled.Text`
     color: ${(props) => props.theme.textColor};
 `;
 
-export default function Movies({ navigation: { navigate } }) {
+export default function Movies({ navigation: { navigate } }: any) {
     return (
         <Button
             onPress={() => {
