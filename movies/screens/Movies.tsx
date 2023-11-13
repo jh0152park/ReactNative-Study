@@ -34,7 +34,9 @@ const Title = styled.Text`
     color: ${(props) => props.theme.textColor};
 `;
 
-export default function Movies({ navigation: { navigate } }: any) {
+type MoviesProps = NativeStackScreenProps<any, "Movies">;
+
+export default function Movies({ navigation }: MoviesProps) {
     const { isLoading, data } = useQuery(["nowPlaying"], () =>
         getNowPlayingMovieList(1)
     );
