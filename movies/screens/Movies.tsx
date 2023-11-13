@@ -19,6 +19,7 @@ import { BlurView } from "expo-blur";
 import Slide from "../components/Slide";
 import Poster from "../components/Poster";
 import Vote from "../components/Vote";
+import HList from "../components/HList";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -40,11 +41,6 @@ const ListTitle = styled.Text`
     margin-left: 30px;
 `;
 
-const Movie = styled.View`
-    margin-right: 20px;
-    align-items: center;
-`;
-
 const HolizontalScroll = styled.ScrollView`
     margin-top: 20px;
 `;
@@ -63,7 +59,7 @@ const ListContainer = styled.View`
 const HMovie = styled.View`
     padding: 0px 30px;
     flex-direction: row;
-    margin-top: 50px;
+    margin-top: 30px;
 `;
 
 const HColumn = styled.View`
@@ -154,16 +150,12 @@ export default function Movies({ navigation }: MoviesProps) {
                     }}
                 >
                     {upComingData?.results.map((movie: any) => (
-                        <Movie key={movie.id}>
-                            <Poster poster_path={movie.poster_path} />
-                            <Title>
-                                {movie.original_title.slice(0, 13)}
-                                {movie.original_title.length > 13
-                                    ? "..."
-                                    : null}
-                            </Title>
-                            <Vote vote_average={movie.vote_average} />
-                        </Movie>
+                        <HList
+                            key={movie.id}
+                            poster_path={movie.poster_path}
+                            original_title={movie.original_title}
+                            vote_average={movie.vote_average}
+                        />
                     ))}
                 </HolizontalScroll>
             </ListContainer>
