@@ -4,6 +4,7 @@ import styled from "styled-components/native";
 import { createImagePath } from "../api";
 import { BlurView } from "expo-blur";
 import Poster from "./Poster";
+import Vote from "./Vote";
 
 const Image = styled.Image`
     width: 100%;
@@ -34,11 +35,6 @@ const Overview = styled.Text`
     margin-top: 10px;
 `;
 
-const Vote = styled(Overview)`
-    margin-top: 5px;
-    font-size: 13px;
-`;
-
 interface IProps {
     backdrop_path: string;
     poster_path: string;
@@ -67,9 +63,7 @@ export default function Slide({
                     <Poster poster_path={poster_path} />
                     <Column>
                         <Title>{original_title}</Title>
-                        {vote_average > 0 ? (
-                            <Vote>⭐️ {vote_average.toFixed(1)} / 10</Vote>
-                        ) : null}
+                        <Vote vote_average={vote_average} />
                         <Overview>{overview.slice(0, 100) + "..."}</Overview>
                     </Column>
                 </Wrapper>
