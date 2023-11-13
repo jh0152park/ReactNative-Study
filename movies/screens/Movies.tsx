@@ -18,6 +18,7 @@ import {
 import { BlurView } from "expo-blur";
 import Slide from "../components/Slide";
 import Poster from "../components/Poster";
+import Vote from "../components/Vote";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -53,10 +54,6 @@ const Title = styled.Text`
     margin-bottom: 5px;
     color: ${(props) => props.theme.textColor};
     font-weight: bold;
-`;
-
-const Vote = styled.Text`
-    color: ${(props) => props.theme.textColor};
 `;
 
 const ListContainer = styled.View`
@@ -165,12 +162,7 @@ export default function Movies({ navigation }: MoviesProps) {
                                     ? "..."
                                     : null}
                             </Title>
-
-                            <Vote>
-                                {movie.vote_average > 0
-                                    ? `⭐️ ${movie.vote_average.toFixed(1)}`
-                                    : "Comming soon"}
-                            </Vote>
+                            <Vote vote_average={movie.vote_average} />
                         </Movie>
                     ))}
                 </HolizontalScroll>
