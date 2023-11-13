@@ -58,6 +58,29 @@ const Vote = styled.Text`
     color: ${(props) => props.theme.textColor};
 `;
 
+const ListContainer = styled.View`
+    margin-bottom: 40px;
+`;
+
+const HMovie = styled.View`
+    padding: 0px 30px;
+    flex-direction: row;
+    margin-top: 50px;
+`;
+
+const HColumn = styled.View`
+    margin-top: -10px;
+    margin-left: 15px;
+    width: 80%;
+`;
+
+const Overview = styled.Text`
+    color: ${(props) => props.theme.textColor};
+    width: 80%;
+    font-size: 13px;
+    margin-top: 20px;
+`;
+
 type MoviesProps = NativeStackScreenProps<any, "Movies">;
 
 export default function Movies({ navigation }: MoviesProps) {
@@ -66,15 +89,15 @@ export default function Movies({ navigation }: MoviesProps) {
         () => getNowPlayingMovieList(1)
     );
     const { isLoading: upComingLoading, data: upComingData } = useQuery(
-        ["nowPlaying"],
+        ["upComming"],
         () => getUpComingMovieList(1)
     );
     const { isLoading: pipularLoading, data: popularData } = useQuery(
-        ["nowPlaying"],
+        ["popular"],
         () => getPopularMovieList(1)
     );
 
-    return nowPlayingLoading ? (
+    return nowPlayingLoading || upComingLoading || pipularLoading ? (
         <Loading>
             <ActivityIndicator />
         </Loading>
@@ -105,25 +128,52 @@ export default function Movies({ navigation }: MoviesProps) {
                 ))}
             </Swiper>
 
-            <ListTitle>Up Comming Movies</ListTitle>
-            <HolizontalScroll
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{
-                    paddingLeft: 30,
-                }}
-            >
-                {upComingData?.results.map((movie: any) => (
-                    <Movie key={movie.id}>
-                        <Poster poster_path={movie.poster_path} />
-                        <Title>
-                            {movie.original_title.slice(0, 13)}
-                            {movie.original_title.length > 13 ? "..." : null}
-                        </Title>
-                        <Vote>{movie.vote_average.toFixed(1)}</Vote>
-                    </Movie>
-                ))}
-            </HolizontalScroll>
+            <ListContainer>
+                <ListTitle>Up Comming Movies</ListTitle>
+                <HolizontalScroll
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{
+                        paddingLeft: 30,
+                    }}
+                >
+                    {upComingData?.results.map((movie: any) => (
+                        <Movie key={movie.id}>
+                            <Poster poster_path={movie.poster_path} />
+                            <Title>
+                                {movie.original_title.slice(0, 13)}
+                                {movie.original_title.length > 13
+                                    ? "..."
+                                    : null}
+                            </Title>
+
+                            <Vote>
+                                {movie.vote_average > 0
+                                    ? `⭐️ ${movie.vote_average.toFixed(1)}`
+                                    : "Comming soon"}
+                            </Vote>
+                        </Movie>
+                    ))}
+                </HolizontalScroll>
+            </ListContainer>
+
+            <ListTitle>Popular Movies</ListTitle>
+            {popularData?.results.map((movie: any) => (
+                <HMovie key={movie.id}>
+                    <Poster poster_path={movie.poster_path} />
+                    <HColumn>
+                        <Title>{movie.original_title}</Title>
+                        <Overview>
+                            {movie.overview.slice(0, 150)}
+                            {movie.overview.length > 150
+                                ? "..."
+                                : movie.overview.length === 0
+                                ? "-"
+                                : ""}
+                        </Overview>
+                    </HColumn>
+                </HMovie>
+            ))}
         </ScrollContainer>
     );
 }
