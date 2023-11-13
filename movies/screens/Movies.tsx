@@ -4,6 +4,7 @@ import styled from "styled-components/native";
 import {
     ActivityIndicator,
     Dimensions,
+    RefreshControl,
     ScrollView,
     StyleSheet,
 } from "react-native";
@@ -84,25 +85,43 @@ const Overview = styled.Text`
 type MoviesProps = NativeStackScreenProps<any, "Movies">;
 
 export default function Movies({ navigation }: MoviesProps) {
-    const { isLoading: nowPlayingLoading, data: nowPlayingData } = useQuery(
-        ["nowPlaying"],
-        () => getNowPlayingMovieList(1)
-    );
-    const { isLoading: upComingLoading, data: upComingData } = useQuery(
-        ["upComming"],
-        () => getUpComingMovieList(1)
-    );
-    const { isLoading: pipularLoading, data: popularData } = useQuery(
-        ["popular"],
-        () => getPopularMovieList(1)
-    );
+    const [refreshing, setRefresing] = useState(false);
+    const {
+        isLoading: nowPlayingLoading,
+        data: nowPlayingData,
+        refetch: nowPlayingRefetch,
+    } = useQuery(["nowPlaying"], () => getNowPlayingMovieList(1));
+    const {
+        isLoading: upComingLoading,
+        data: upComingData,
+        refetch: upCommingRefetch,
+    } = useQuery(["upComming"], () => getUpComingMovieList(1));
+    const {
+        isLoading: popularLoading,
+        data: popularData,
+        refetch: popularRefetch,
+    } = useQuery(["popular"], () => getPopularMovieList(1));
 
-    return nowPlayingLoading || upComingLoading || pipularLoading ? (
+    function onRefresh() {
+        console.log("onRefresh");
+        setRefresing(true);
+        nowPlayingRefetch();
+        upCommingRefetch();
+        popularRefetch();
+        setRefresing(false);
+        console.log("done");
+    }
+
+    return nowPlayingLoading || upComingLoading || popularLoading ? (
         <Loading>
             <ActivityIndicator />
         </Loading>
     ) : (
-        <ScrollContainer>
+        <ScrollContainer
+            refreshControl={
+                <RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
+            }
+        >
             <Swiper
                 horizontal
                 loop
