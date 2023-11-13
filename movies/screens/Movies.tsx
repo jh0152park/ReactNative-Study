@@ -20,6 +20,7 @@ import Slide from "../components/Slide";
 import Poster from "../components/Poster";
 import Vote from "../components/Vote";
 import HList from "../components/HList";
+import VList from "../components/VList";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -45,34 +46,8 @@ const HolizontalScroll = styled.ScrollView`
     margin-top: 20px;
 `;
 
-const Title = styled.Text`
-    margin-top: 10px;
-    margin-bottom: 5px;
-    color: ${(props) => props.theme.textColor};
-    font-weight: bold;
-`;
-
 const ListContainer = styled.View`
     margin-bottom: 40px;
-`;
-
-const HMovie = styled.View`
-    padding: 0px 30px;
-    flex-direction: row;
-    margin-top: 30px;
-`;
-
-const HColumn = styled.View`
-    margin-top: -10px;
-    margin-left: 15px;
-    width: 80%;
-`;
-
-const Overview = styled.Text`
-    color: ${(props) => props.theme.textColor};
-    width: 80%;
-    font-size: 13px;
-    margin-top: 20px;
 `;
 
 type MoviesProps = NativeStackScreenProps<any, "Movies">;
@@ -162,20 +137,12 @@ export default function Movies({ navigation }: MoviesProps) {
 
             <ListTitle>Popular Movies</ListTitle>
             {popularData?.results.map((movie: any) => (
-                <HMovie key={movie.id}>
-                    <Poster poster_path={movie.poster_path} />
-                    <HColumn>
-                        <Title>{movie.original_title}</Title>
-                        <Overview>
-                            {movie.overview.slice(0, 150)}
-                            {movie.overview.length > 150
-                                ? "..."
-                                : movie.overview.length === 0
-                                ? "-"
-                                : ""}
-                        </Overview>
-                    </HColumn>
-                </HMovie>
+                <VList
+                    key={movie.id}
+                    poster_path={movie.poster_path}
+                    original_title={movie.original_title}
+                    overview={movie.overview}
+                />
             ))}
         </ScrollContainer>
     );
