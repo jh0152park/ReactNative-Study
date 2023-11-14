@@ -54,6 +54,14 @@ const ListContainer = styled.View`
     margin-bottom: 40px;
 `;
 
+const VSeparator = styled.View`
+    width: 30px;
+`;
+
+const HSeparator = styled.View`
+    width: 30px;
+`;
+
 type MoviesProps = NativeStackScreenProps<any, "Movies">;
 
 export default function Movies({ navigation }: MoviesProps) {
@@ -84,6 +92,31 @@ export default function Movies({ navigation }: MoviesProps) {
         console.log("done");
     }
 
+    function renderHList({ item }: any) {
+        return (
+            <HList
+                poster_path={item.poster_path}
+                original_title={item.original_title}
+                vote_average={item.vote_average}
+            />
+        );
+    }
+
+    function renderVList({ item }: any) {
+        return (
+            <VList
+                key={item.id}
+                poster_path={item.poster_path}
+                original_title={item.original_title}
+                overview={item.overview}
+            />
+        );
+    }
+
+    function movieKeyExtractor(item: any) {
+        return item.id + "";
+    }
+
     return nowPlayingLoading || upComingLoading || popularLoading ? (
         <Loading>
             <ActivityIndicator />
@@ -93,21 +126,14 @@ export default function Movies({ navigation }: MoviesProps) {
             onRefresh={onRefresh}
             refreshing={refreshing}
             data={popularData?.results}
-            keyExtractor={(item: any) => item.id + ""}
-            ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
-            renderItem={({ item }) => (
-                <VList
-                    key={item.id}
-                    poster_path={item.poster_path}
-                    original_title={item.original_title}
-                    overview={item.overview}
-                />
-            )}
+            keyExtractor={movieKeyExtractor}
+            ItemSeparatorComponent={VSeparator}
+            renderItem={renderVList}
             ListHeaderComponent={
                 <>
                     <Swiper
-                        horizontal
                         loop
+                        horizontal
                         autoplay
                         autoplayTimeout={5}
                         showsButtons={false}
@@ -133,23 +159,15 @@ export default function Movies({ navigation }: MoviesProps) {
                     <ListContainer>
                         <ListTitle>Up Comming Movies</ListTitle>
                         <HolizontalScroll
-                            data={upComingData?.results}
                             horizontal
+                            data={upComingData?.results}
                             showsHorizontalScrollIndicator={false}
                             contentContainerStyle={{
                                 paddingHorizontal: 30,
                             }}
-                            ItemSeparatorComponent={() => (
-                                <View style={{ width: 30 }} />
-                            )}
-                            keyExtractor={(item: any) => item.id + ""}
-                            renderItem={({ item }: any) => (
-                                <HList
-                                    poster_path={item.poster_path}
-                                    original_title={item.original_title}
-                                    vote_average={item.vote_average}
-                                />
-                            )}
+                            ItemSeparatorComponent={HSeparator}
+                            keyExtractor={movieKeyExtractor}
+                            renderItem={renderHList}
                         />
                     </ListContainer>
 
