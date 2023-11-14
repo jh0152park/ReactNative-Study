@@ -12,7 +12,7 @@ import {
     View,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import {
     getNowPlayingMovieList,
     getPopularMovieList,
@@ -24,6 +24,7 @@ import Poster from "../components/Poster";
 import Vote from "../components/Vote";
 import HList from "../components/HList";
 import VList from "../components/VList";
+import { IData, IResult } from "../types";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -65,30 +66,28 @@ const HSeparator = styled.View`
 type MoviesProps = NativeStackScreenProps<any, "Movies">;
 
 export default function Movies({ navigation }: MoviesProps) {
-    const [refreshing, setRefresing] = useState(false);
+    const queryClient = useQueryClient();
     const {
         isLoading: nowPlayingLoading,
         data: nowPlayingData,
-        refetch: nowPlayingRefetch,
-    } = useQuery(["nowPlaying"], () => getNowPlayingMovieList(1));
+        isRefetching: isRefetchingNowPlaying,
+    } = useQuery<IData>(["movies", "nowPlaying"], () =>
+        getNowPlayingMovieList(1)
+    );
     const {
         isLoading: upComingLoading,
         data: upComingData,
-        refetch: upCommingRefetch,
-    } = useQuery(["upComming"], () => getUpComingMovieList(1));
+        isRefetching: isRefetchingUpComing,
+    } = useQuery<IData>(["movies", "upComming"], () => getUpComingMovieList(1));
     const {
         isLoading: popularLoading,
         data: popularData,
-        refetch: popularRefetch,
-    } = useQuery(["popular"], () => getPopularMovieList(1));
+        isRefetching: isRefetchingPopular,
+    } = useQuery<IData>(["movies", "popular"], () => getPopularMovieList(1));
 
     function onRefresh() {
         console.log("onRefresh");
-        setRefresing(true);
-        nowPlayingRefetch();
-        upCommingRefetch();
-        popularRefetch();
-        setRefresing(false);
+        queryClient.refetchQueries(["movies"]);
         console.log("done");
     }
 
@@ -117,16 +116,20 @@ export default function Movies({ navigation }: MoviesProps) {
         return item.id + "";
     }
 
-    return nowPlayingLoading || upComingLoading || popularLoading ? (
+    const isLoading = nowPlayingLoading || upComingLoading || popularLoading;
+    const isRefreshing =
+        isRefetchingNowPlaying || isRefetchingUpComing || isRefetchingPopular;
+
+    return isLoading ? (
         <Loading>
             <ActivityIndicator />
         </Loading>
     ) : (
         <FlatList
             onRefresh={onRefresh}
-            refreshing={refreshing}
+            refreshing={isRefreshing}
             data={popularData?.results}
-            keyExtractor={movieKeyExtractor}
+            keyExtractor={(item) => item.id + ""}
             ItemSeparatorComponent={HSeparator}
             renderItem={renderVList}
             ListHeaderComponent={
@@ -158,17 +161,19 @@ export default function Movies({ navigation }: MoviesProps) {
 
                     <ListContainer>
                         <ListTitle>Up Comming Movies</ListTitle>
-                        <HolizontalScroll
-                            horizontal
-                            data={upComingData?.results}
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{
-                                paddingHorizontal: 30,
-                            }}
-                            ItemSeparatorComponent={VSeparator}
-                            keyExtractor={movieKeyExtractor}
-                            renderItem={renderHList}
-                        />
+                        {upComingData ? (
+                            <HolizontalScroll
+                                horizontal
+                                data={upComingData.results}
+                                showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={{
+                                    paddingHorizontal: 30,
+                                }}
+                                ItemSeparatorComponent={VSeparator}
+                                keyExtractor={(item: any) => item.id + ""}
+                                renderItem={renderHList}
+                            />
+                        ) : null}
                     </ListContainer>
 
                     <ListTitle>Popular Movies</ListTitle>
