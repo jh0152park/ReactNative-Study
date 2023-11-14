@@ -43,10 +43,11 @@ const ListTitle = styled.Text`
     font-size: 18px;
     font-weight: bold;
     margin-left: 30px;
+    margin-bottom: 20px;
 `;
 
 const HolizontalScroll = styled.FlatList`
-    margin-top: 20px;
+    /* margin-top: 20px; */
 `;
 
 const ListContainer = styled.View`
@@ -88,68 +89,73 @@ export default function Movies({ navigation }: MoviesProps) {
             <ActivityIndicator />
         </Loading>
     ) : (
-        <ScrollContainer
-            refreshControl={
-                <RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
-            }
-        >
-            <Swiper
-                horizontal
-                loop
-                autoplay
-                autoplayTimeout={5}
-                showsButtons={false}
-                showsPagination={false}
-                containerStyle={{
-                    width: "100%",
-                    height: SCREEN_HEIGHT * 0.25,
-                    marginBottom: 30,
-                }}
-            >
-                {nowPlayingData?.results.map((movie: any) => (
-                    <Slide
-                        key={movie.id}
-                        backdrop_path={movie.backdrop_path}
-                        poster_path={movie.poster_path}
-                        original_title={movie.original_title}
-                        overview={movie.overview}
-                        vote_average={movie.vote_average}
-                    />
-                ))}
-            </Swiper>
-
-            <ListContainer>
-                <ListTitle>Up Comming Movies</ListTitle>
-                <HolizontalScroll
-                    data={upComingData?.results}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{
-                        paddingHorizontal: 30,
-                    }}
-                    ItemSeparatorComponent={() => (
-                        <View style={{ width: 30 }} />
-                    )}
-                    keyExtractor={(item: any) => item.id + ""}
-                    renderItem={({ item }: any) => (
-                        <HList
-                            poster_path={item.poster_path}
-                            original_title={item.original_title}
-                            vote_average={item.vote_average}
-                        />
-                    )}
-                />
-            </ListContainer>
-
-            <ListTitle>Popular Movies</ListTitle>
-            {popularData?.results.map((movie: any) => (
+        <FlatList
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+            data={popularData?.results}
+            keyExtractor={(item: any) => item.id + ""}
+            ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
+            renderItem={({ item }) => (
                 <VList
-                    key={movie.id}
-                    poster_path={movie.poster_path}
-                    original_title={movie.original_title}
-                    overview={movie.overview}
+                    key={item.id}
+                    poster_path={item.poster_path}
+                    original_title={item.original_title}
+                    overview={item.overview}
                 />
-            ))}
-        </ScrollContainer>
+            )}
+            ListHeaderComponent={
+                <>
+                    <Swiper
+                        horizontal
+                        loop
+                        autoplay
+                        autoplayTimeout={5}
+                        showsButtons={false}
+                        showsPagination={false}
+                        containerStyle={{
+                            width: "100%",
+                            height: SCREEN_HEIGHT * 0.25,
+                            marginBottom: 30,
+                        }}
+                    >
+                        {nowPlayingData?.results.map((movie: any) => (
+                            <Slide
+                                key={movie.id}
+                                backdrop_path={movie.backdrop_path}
+                                poster_path={movie.poster_path}
+                                original_title={movie.original_title}
+                                overview={movie.overview}
+                                vote_average={movie.vote_average}
+                            />
+                        ))}
+                    </Swiper>
+
+                    <ListContainer>
+                        <ListTitle>Up Comming Movies</ListTitle>
+                        <HolizontalScroll
+                            data={upComingData?.results}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={{
+                                paddingHorizontal: 30,
+                            }}
+                            ItemSeparatorComponent={() => (
+                                <View style={{ width: 30 }} />
+                            )}
+                            keyExtractor={(item: any) => item.id + ""}
+                            renderItem={({ item }: any) => (
+                                <HList
+                                    poster_path={item.poster_path}
+                                    original_title={item.original_title}
+                                    vote_average={item.vote_average}
+                                />
+                            )}
+                        />
+                    </ListContainer>
+
+                    <ListTitle>Popular Movies</ListTitle>
+                </>
+            }
+        />
     );
 }

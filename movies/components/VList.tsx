@@ -11,7 +11,7 @@ const Title = styled.Text`
 const HMovie = styled.View`
     padding: 0px 30px;
     flex-direction: row;
-    margin-top: 30px;
+    /* margin-top: 30px; */
 `;
 
 const HColumn = styled.View`
