@@ -3,7 +3,6 @@ import Poster from "./Poster";
 import Vote from "./Vote";
 
 const Movie = styled.View`
-    margin-right: 20px;
     align-items: center;
 `;
 

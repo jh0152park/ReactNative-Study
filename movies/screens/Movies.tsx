@@ -4,9 +4,12 @@ import styled from "styled-components/native";
 import {
     ActivityIndicator,
     Dimensions,
+    FlatList,
     RefreshControl,
     ScrollView,
     StyleSheet,
+    Text,
+    View,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useQuery } from "react-query";
@@ -42,7 +45,7 @@ const ListTitle = styled.Text`
     margin-left: 30px;
 `;
 
-const HolizontalScroll = styled.ScrollView`
+const HolizontalScroll = styled.FlatList`
     margin-top: 20px;
 `;
 
@@ -118,21 +121,24 @@ export default function Movies({ navigation }: MoviesProps) {
             <ListContainer>
                 <ListTitle>Up Comming Movies</ListTitle>
                 <HolizontalScroll
+                    data={upComingData?.results}
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{
-                        paddingLeft: 30,
+                        paddingHorizontal: 30,
                     }}
-                >
-                    {upComingData?.results.map((movie: any) => (
+                    ItemSeparatorComponent={() => (
+                        <View style={{ width: 30 }} />
+                    )}
+                    keyExtractor={(item: any) => item.id + ""}
+                    renderItem={({ item }: any) => (
                         <HList
-                            key={movie.id}
-                            poster_path={movie.poster_path}
-                            original_title={movie.original_title}
-                            vote_average={movie.vote_average}
+                            poster_path={item.poster_path}
+                            original_title={item.original_title}
+                            vote_average={item.vote_average}
                         />
-                    ))}
-                </HolizontalScroll>
+                    )}
+                />
             </ListContainer>
 
             <ListTitle>Popular Movies</ListTitle>
