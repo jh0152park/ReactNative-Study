@@ -59,7 +59,7 @@ const VSeparator = styled.View`
 `;
 
 const HSeparator = styled.View`
-    width: 30px;
+    height: 30px;
 `;
 
 type MoviesProps = NativeStackScreenProps<any, "Movies">;
@@ -127,7 +127,7 @@ export default function Movies({ navigation }: MoviesProps) {
             refreshing={refreshing}
             data={popularData?.results}
             keyExtractor={movieKeyExtractor}
-            ItemSeparatorComponent={VSeparator}
+            ItemSeparatorComponent={HSeparator}
             renderItem={renderVList}
             ListHeaderComponent={
                 <>
@@ -165,7 +165,7 @@ export default function Movies({ navigation }: MoviesProps) {
                             contentContainerStyle={{
                                 paddingHorizontal: 30,
                             }}
-                            ItemSeparatorComponent={HSeparator}
+                            ItemSeparatorComponent={VSeparator}
                             keyExtractor={movieKeyExtractor}
                             renderItem={renderHList}
                         />
