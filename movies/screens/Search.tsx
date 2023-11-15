@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import styled from "styled-components/native";
 import { SearchMovie, SearchTV } from "../api";
+import Loader from "../components/Loader";
+import HList from "../components/HList";
 
 const Container = styled.ScrollView``;
 
@@ -16,6 +18,8 @@ const SearchBar = styled.TextInput`
 
 export default function Search() {
     const [query, setQuery] = useState("");
+    const [keyword, setKeyword] = useState("");
+
     const {
         isLoading: movieLoading,
         data: movieData,
@@ -28,7 +32,7 @@ export default function Search() {
         isLoading: tvLoading,
         data: tvData,
         refetch: tvRefetch,
-    } = useQuery("serarchMovie", () => SearchTV(query, 1), {
+    } = useQuery("serarchTV", () => SearchTV(query, 1), {
         enabled: false,
     });
 
@@ -42,7 +46,10 @@ export default function Search() {
         }
         movieRefetch();
         tvRefetch();
+        setKeyword(query);
     }
+
+    const isLoading = movieLoading || tvLoading;
 
     return (
         <Container>
@@ -53,6 +60,20 @@ export default function Search() {
                 onChangeText={onChangeText}
                 onSubmitEditing={onSubmit}
             />
+
+            {isLoading ? <Loader /> : null}
+            {movieData ? (
+                <HList
+                    title={`Result for ${keyword} Movie`}
+                    data={movieData.results}
+                />
+            ) : null}
+            {tvData ? (
+                <HList
+                    title={`Result for ${keyword} TV`}
+                    data={tvData.results}
+                />
+            ) : null}
         </Container>
     );
 }
