@@ -20,40 +20,15 @@ import {
 } from "../api";
 import { BlurView } from "expo-blur";
 import Slide from "../components/Slide";
-import Poster from "../components/Poster";
-import Vote from "../components/Vote";
-import HList from "../components/HList";
 import VList from "../components/VList";
 import { IData, IResult } from "../types";
 import Loader from "../components/Loader";
+import Title from "../components/Title";
+import HList from "../components/HList";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const ScrollContainer = styled.ScrollView`
-    background-color: ${(props) => props.theme.mainBackgroundColor};
-`;
-
-const ListTitle = styled.Text`
-    color: ${(props) => props.theme.textColor};
-    font-size: 18px;
-    font-weight: bold;
-    margin-left: 30px;
-    margin-bottom: 20px;
-`;
-
-const HolizontalScroll = styled.FlatList`
-    /* margin-top: 20px; */
-`;
-
-const ListContainer = styled.View`
-    margin-bottom: 40px;
-`;
-
 const VSeparator = styled.View`
-    width: 30px;
-`;
-
-const HSeparator = styled.View`
     height: 30px;
 `;
 
@@ -85,16 +60,6 @@ export default function Movies({ navigation }: MoviesProps) {
         console.log("done");
     }
 
-    function renderHList({ item }: any) {
-        return (
-            <HList
-                poster_path={item.poster_path}
-                original_title={item.original_title}
-                vote_average={item.vote_average}
-            />
-        );
-    }
-
     function renderVList({ item }: any) {
         return (
             <VList
@@ -104,10 +69,6 @@ export default function Movies({ navigation }: MoviesProps) {
                 overview={item.overview}
             />
         );
-    }
-
-    function movieKeyExtractor(item: any) {
-        return item.id + "";
     }
 
     const isLoading = nowPlayingLoading || upComingLoading || popularLoading;
@@ -122,7 +83,7 @@ export default function Movies({ navigation }: MoviesProps) {
             refreshing={isRefreshing}
             data={popularData?.results}
             keyExtractor={(item) => item.id + ""}
-            ItemSeparatorComponent={HSeparator}
+            ItemSeparatorComponent={VSeparator}
             renderItem={renderVList}
             ListHeaderComponent={
                 <>
@@ -136,7 +97,6 @@ export default function Movies({ navigation }: MoviesProps) {
                         containerStyle={{
                             width: "100%",
                             height: SCREEN_HEIGHT * 0.25,
-                            marginBottom: 30,
                         }}
                     >
                         {nowPlayingData?.results.map((movie: any) => (
@@ -151,24 +111,14 @@ export default function Movies({ navigation }: MoviesProps) {
                         ))}
                     </Swiper>
 
-                    <ListContainer>
-                        <ListTitle>Up Comming Movies</ListTitle>
-                        {upComingData ? (
-                            <HolizontalScroll
-                                horizontal
-                                data={upComingData.results}
-                                showsHorizontalScrollIndicator={false}
-                                contentContainerStyle={{
-                                    paddingHorizontal: 30,
-                                }}
-                                ItemSeparatorComponent={VSeparator}
-                                keyExtractor={(item: any) => item.id + ""}
-                                renderItem={renderHList}
-                            />
-                        ) : null}
-                    </ListContainer>
+                    {upComingData ? (
+                        <HList
+                            title={"Popular TV"}
+                            data={upComingData.results}
+                        />
+                    ) : null}
 
-                    <ListTitle>Popular Movies</ListTitle>
+                    <Title title={"Popular Movies"} />
                 </>
             }
         />
