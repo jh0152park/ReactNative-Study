@@ -36,28 +36,27 @@ type MoviesProps = NativeStackScreenProps<any, "Movies">;
 
 export default function Movies({ navigation }: MoviesProps) {
     const queryClient = useQueryClient();
-    const {
-        isLoading: nowPlayingLoading,
-        data: nowPlayingData,
-        isRefetching: isRefetchingNowPlaying,
-    } = useQuery<IData>(["movies", "nowPlaying"], () =>
-        getNowPlayingMovieList(1)
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const { isLoading: nowPlayingLoading, data: nowPlayingData } =
+        useQuery<IData>(["movies", "nowPlaying"], () =>
+            getNowPlayingMovieList(1)
+        );
+    const { isLoading: upComingLoading, data: upComingData } = useQuery<IData>(
+        ["movies", "upComming"],
+        () => getUpComingMovieList(1)
     );
-    const {
-        isLoading: upComingLoading,
-        data: upComingData,
-        isRefetching: isRefetchingUpComing,
-    } = useQuery<IData>(["movies", "upComming"], () => getUpComingMovieList(1));
-    const {
-        isLoading: popularLoading,
-        data: popularData,
-        isRefetching: isRefetchingPopular,
-    } = useQuery<IData>(["movies", "popular"], () => getPopularMovieList(1));
+    const { isLoading: popularLoading, data: popularData } = useQuery<IData>(
+        ["movies", "popular"],
+        () => getPopularMovieList(1)
+    );
 
     function onRefresh() {
         console.log("onRefresh");
+        setIsRefreshing(true);
         queryClient.refetchQueries(["movies"]);
         console.log("done");
+        setIsRefreshing(false);
     }
 
     function renderVList({ item }: any) {
@@ -72,8 +71,6 @@ export default function Movies({ navigation }: MoviesProps) {
     }
 
     const isLoading = nowPlayingLoading || upComingLoading || popularLoading;
-    const isRefreshing =
-        isRefetchingNowPlaying || isRefetchingUpComing || isRefetchingPopular;
 
     return isLoading ? (
         <Loader />
