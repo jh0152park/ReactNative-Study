@@ -25,18 +25,12 @@ import Vote from "../components/Vote";
 import HList from "../components/HList";
 import VList from "../components/VList";
 import { IData, IResult } from "../types";
+import Loader from "../components/Loader";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const ScrollContainer = styled.ScrollView`
     background-color: ${(props) => props.theme.mainBackgroundColor};
-`;
-
-const Loading = styled.View`
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    /* background-color: ${(props) => props.theme.mainBackgroundColor}; */
 `;
 
 const ListTitle = styled.Text`
@@ -121,9 +115,7 @@ export default function Movies({ navigation }: MoviesProps) {
         isRefetchingNowPlaying || isRefetchingUpComing || isRefetchingPopular;
 
     return isLoading ? (
-        <Loading>
-            <ActivityIndicator />
-        </Loading>
+        <Loader />
     ) : (
         <FlatList
             onRefresh={onRefresh}
