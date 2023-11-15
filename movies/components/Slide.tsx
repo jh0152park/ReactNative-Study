@@ -1,10 +1,11 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import styled from "styled-components/native";
 import { createImagePath } from "../api";
 import { BlurView } from "expo-blur";
 import Poster from "./Poster";
 import Vote from "./Vote";
+import { useNavigation } from "@react-navigation/native";
 
 const Image = styled.Image`
     width: 100%;
@@ -50,24 +51,34 @@ export default function Slide({
     vote_average,
     overview,
 }: IProps) {
+    const navigation = useNavigation();
+
+    function goToDetail() {
+        navigation.navigate("Stack", { screen: "Detail" });
+    }
+
     return (
-        <View style={{ flex: 1 }}>
-            <Image
-                source={{
-                    uri: createImagePath(backdrop_path, 500),
-                }}
-                // blurRadius={1.1}
-            />
-            <BlurView style={StyleSheet.absoluteFill}>
-                <Wrapper>
-                    <Poster poster_path={poster_path} />
-                    <Column>
-                        <Title>{original_title}</Title>
-                        <Vote vote_average={vote_average} />
-                        <Overview>{overview.slice(0, 100) + "..."}</Overview>
-                    </Column>
-                </Wrapper>
-            </BlurView>
-        </View>
+        <TouchableWithoutFeedback onPress={goToDetail}>
+            <View style={{ flex: 1 }}>
+                <Image
+                    source={{
+                        uri: createImagePath(backdrop_path, 500),
+                    }}
+                    // blurRadius={1.1}
+                />
+                <BlurView style={StyleSheet.absoluteFill}>
+                    <Wrapper>
+                        <Poster poster_path={poster_path} />
+                        <Column>
+                            <Title>{original_title}</Title>
+                            <Vote vote_average={vote_average} />
+                            <Overview>
+                                {overview.slice(0, 100) + "..."}
+                            </Overview>
+                        </Column>
+                    </Wrapper>
+                </BlurView>
+            </View>
+        </TouchableWithoutFeedback>
     );
 }

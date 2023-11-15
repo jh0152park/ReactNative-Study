@@ -9,6 +9,7 @@ import {
     ScrollView,
     StyleSheet,
     Text,
+    TouchableOpacity,
     View,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -38,6 +39,10 @@ export default function Movies({ navigation }: MoviesProps) {
     const queryClient = useQueryClient();
     const [isRefreshing, setIsRefreshing] = useState(false);
 
+    function goToDetail() {
+        navigation.navigate("Stack", { screen: "Detail" });
+    }
+
     const { isLoading: nowPlayingLoading, data: nowPlayingData } =
         useQuery<IData>(["movies", "nowPlaying"], () =>
             getNowPlayingMovieList(1)
@@ -61,12 +66,14 @@ export default function Movies({ navigation }: MoviesProps) {
 
     function renderVList({ item }: any) {
         return (
-            <VList
-                key={item.id}
-                poster_path={item.poster_path}
-                original_title={item.original_title}
-                overview={item.overview}
-            />
+            <TouchableOpacity onPress={goToDetail}>
+                <VList
+                    key={item.id}
+                    poster_path={item.poster_path}
+                    original_title={item.original_title}
+                    overview={item.overview}
+                />
+            </TouchableOpacity>
         );
     }
 
@@ -110,7 +117,7 @@ export default function Movies({ navigation }: MoviesProps) {
 
                     {upComingData ? (
                         <HList
-                            title={"Popular TV"}
+                            title={"Upcoming Movies"}
                             data={upComingData.results}
                         />
                     ) : null}

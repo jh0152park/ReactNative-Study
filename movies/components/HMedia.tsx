@@ -1,6 +1,8 @@
 import styled from "styled-components/native";
 import Poster from "./Poster";
 import Vote from "./Vote";
+import { useNavigation } from "@react-navigation/native";
+import { TouchableOpacity } from "react-native";
 
 const Movie = styled.View`
     align-items: center;
@@ -24,14 +26,22 @@ export default function HMedia({
     original_title,
     vote_average,
 }: IProps) {
+    const navigation = useNavigation();
+
+    function goToDetail() {
+        navigation.navigate("Stack", { screen: "Detail" });
+    }
+
     return (
-        <Movie>
-            <Poster poster_path={poster_path} />
-            <Title>
-                {original_title.slice(0, 13)}
-                {original_title.length > 13 ? "..." : null}
-            </Title>
-            <Vote vote_average={vote_average} />
-        </Movie>
+        <TouchableOpacity onPress={goToDetail}>
+            <Movie>
+                <Poster poster_path={poster_path} />
+                <Title>
+                    {original_title.slice(0, 13)}
+                    {original_title.length > 13 ? "..." : null}
+                </Title>
+                <Vote vote_average={vote_average} />
+            </Movie>
+        </TouchableOpacity>
     );
 }
