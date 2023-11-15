@@ -1,37 +1,41 @@
+import { FlatList } from "react-native";
+
+import HMedia from "./HMedia";
+import Title from "./Title";
 import styled from "styled-components/native";
-import Poster from "./Poster";
-import Vote from "./Vote";
-
-const Movie = styled.View`
-    align-items: center;
-`;
-
-const Title = styled.Text`
-    margin-top: 10px;
-    margin-bottom: 5px;
-    color: ${(props) => props.theme.textColor};
-    font-weight: bold;
-`;
 
 interface IProps {
-    poster_path: string;
-    original_title: string;
-    vote_average: number;
+    title: string;
+    data: any[];
 }
 
-export default function HList({
-    poster_path,
-    original_title,
-    vote_average,
-}: IProps) {
+const HSeparator = styled.View`
+    width: 30px;
+`;
+
+export default function HList({ title, data }: IProps) {
     return (
-        <Movie>
-            <Poster poster_path={poster_path} />
-            <Title>
-                {original_title.slice(0, 13)}
-                {original_title.length > 13 ? "..." : null}
-            </Title>
-            <Vote vote_average={vote_average} />
-        </Movie>
+        <>
+            <Title title={title} />
+            <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingHorizontal: 30,
+                }}
+                ItemSeparatorComponent={HSeparator}
+                data={data}
+                keyExtractor={(item) => item.id + ""}
+                renderItem={({ item }) => (
+                    <HMedia
+                        poster_path={item.poster_path}
+                        original_title={
+                            item.original_name ?? item.original_title
+                        }
+                        vote_average={item.vote_average}
+                    />
+                )}
+            />
+        </>
     );
 }
