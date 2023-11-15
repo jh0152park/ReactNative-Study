@@ -9,29 +9,27 @@ import { useState } from "react";
 
 export default function TV() {
     const queryClient = useQueryClient();
-    const {
-        isLoading: aringLaoding,
-        data: aringData,
-        isRefetching: todayRefreshing,
-    } = useQuery(["tv", "today"], () => getAiringTodayTV(1));
-    const {
-        isLoading: topLaoding,
-        data: topData,
-        isRefetching: topRefreshing,
-    } = useQuery(["tv", "top"], () => getTopRatedTV(1));
-    const {
-        isLoading: popularLaoding,
-        data: popularData,
-        isRefetching: popularRefreshing,
-    } = useQuery(["tv", "popular"], () => getPopularTV(1));
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const { isLoading: aringLaoding, data: aringData } = useQuery(
+        ["tv", "today"],
+        () => getAiringTodayTV(1)
+    );
+    const { isLoading: topLaoding, data: topData } = useQuery(
+        ["tv", "top"],
+        () => getTopRatedTV(1)
+    );
+    const { isLoading: popularLaoding, data: popularData } = useQuery(
+        ["tv", "popular"],
+        () => getPopularTV(1)
+    );
 
     const isLoading = aringLaoding || topLaoding || popularLaoding;
-    const isRefresing = todayRefreshing || topRefreshing || popularRefreshing;
 
-    console.log(isRefresing);
-
-    function onRefresh() {
-        queryClient.refetchQueries(["tv"]);
+    async function onRefresh() {
+        setIsRefreshing(true);
+        await queryClient.refetchQueries(["tv"]);
+        setIsRefreshing(false);
     }
 
     if (isLoading) {
@@ -45,7 +43,7 @@ export default function TV() {
             }}
             refreshControl={
                 <RefreshControl
-                    refreshing={isRefresing}
+                    refreshing={isRefreshing}
                     onRefresh={onRefresh}
                 />
             }
