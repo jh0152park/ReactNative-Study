@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 import Poster from "./Poster";
 import Vote from "./Vote";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
 
 const Movie = styled.View`
@@ -19,12 +19,14 @@ interface IProps {
     poster_path: string;
     original_title: string;
     vote_average: number;
+    fullData: any;
 }
 
 export default function HMedia({
     poster_path,
     original_title,
     vote_average,
+    fullData,
 }: IProps) {
     const navigation = useNavigation();
 
@@ -32,7 +34,7 @@ export default function HMedia({
         navigation.navigate("Stack", {
             screen: "Detail",
             params: {
-                original_title,
+                ...fullData,
             },
         });
     }

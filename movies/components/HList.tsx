@@ -33,6 +33,7 @@ export default function HList({ title, data }: IProps) {
                             item.original_name ?? item.original_title
                         }
                         vote_average={item.vote_average}
+                        fullData={item}
                     />
                 )}
             />

@@ -42,6 +42,7 @@ interface IProps {
     original_title: string;
     vote_average: number;
     overview: string;
+    fullData: any;
 }
 
 export default function Slide({
@@ -50,6 +51,7 @@ export default function Slide({
     original_title,
     vote_average,
     overview,
+    fullData,
 }: IProps) {
     const navigation = useNavigation();
 
@@ -57,7 +59,7 @@ export default function Slide({
         navigation.navigate("Stack", {
             screen: "Detail",
             params: {
-                original_title,
+                ...fullData,
             },
         });
     }

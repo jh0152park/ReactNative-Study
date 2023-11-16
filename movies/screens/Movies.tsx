@@ -39,11 +39,11 @@ export default function Movies({ navigation }: MoviesProps) {
     const queryClient = useQueryClient();
     const [isRefreshing, setIsRefreshing] = useState(false);
 
-    function goToDetail(original_title: string) {
+    function goToDetail(fullData: any) {
         navigation.navigate("Stack", {
             screen: "Detail",
             params: {
-                original_title,
+                ...fullData,
             },
         });
     }
@@ -71,7 +71,7 @@ export default function Movies({ navigation }: MoviesProps) {
 
     function renderVList({ item }: any) {
         return (
-            <TouchableOpacity onPress={() => goToDetail(item.original_title)}>
+            <TouchableOpacity onPress={() => goToDetail(item)}>
                 <VList
                     key={item.id}
                     poster_path={item.poster_path}
@@ -116,6 +116,7 @@ export default function Movies({ navigation }: MoviesProps) {
                                 original_title={movie.original_title}
                                 overview={movie.overview}
                                 vote_average={movie.vote_average}
+                                fullData={movie}
                             />
                         ))}
                     </Swiper>
