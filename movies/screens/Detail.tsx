@@ -2,10 +2,11 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect } from "react";
 import styled from "styled-components/native";
 import Poster from "../components/Poster";
-import { Dimensions, StyleSheet } from "react-native";
-import { createImagePath, getMovieDetail, getTVDetail } from "../api";
-import { LinearGradient } from "expo-linear-gradient";
+import { Dimensions, StyleSheet, Linking } from "react-native";
+import { createImagePath, getMovieVideoInfo, getTVVideoInfo } from "../api";
 import { useQuery } from "react-query";
+import Loader from "../components/Loader";
+import { Ionicons } from "@expo/vector-icons";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -34,10 +35,26 @@ const Title = styled.Text`
     font-weight: bold;
 `;
 
+const Data = styled.View`
+    padding: 0px 20px;
+`;
+
 const Overview = styled.Text`
     color: ${(props) => props.theme.textColor};
-    margin-top: 20px;
-    padding: 0px 20px;
+    margin: 20px 0px;
+`;
+
+const VideoButton = styled.TouchableOpacity`
+    color: ${(props) => props.theme.textColor};
+    flex-direction: row;
+`;
+
+const TestButton = styled.Text`
+    color: ${(props) => props.theme.textColor};
+    font-weight: bold;
+    margin-bottom: 10px;
+    line-height: 25px;
+    margin-left: 10px;
 `;
 
 export default function Detail({
@@ -45,20 +62,18 @@ export default function Detail({
     route: { params },
 }: any) {
     const title = params.original_title ?? params.original_name;
-    const { isLoading: movieDetailLoading, data: movieDetailData } = useQuery(
-        ["movies", params.id],
-        () => getMovieDetail(params.id),
-        {
-            enabled: "original_title" in params,
-        }
+    const isMovie = "original_title" in params;
+
+    const { isLoading, data } = useQuery(
+        [isMovie ? "movies_detail" : "tv_detail", params.id],
+        () =>
+            isMovie ? getMovieVideoInfo(params.id) : getTVVideoInfo(params.id)
     );
-    const { isLoading: tvDetailLoading, data: tvDetailData } = useQuery(
-        ["tv", params.id],
-        () => getTVDetail(params.id),
-        {
-            enabled: "original_name" in params,
-        }
-    );
+
+    async function openYoutubeLink(id: string | number) {
+        const baseURL = `https://www.youtube.com/watch?v=${id}`;
+        await Linking.openURL(baseURL);
+    }
 
     useEffect(() => {
         setOptions({
@@ -81,7 +96,20 @@ export default function Detail({
                     <Title>{title}</Title>
                 </Column>
             </Header>
-            <Overview>{params.overview}</Overview>
+
+            <Data>
+                <Overview>{params.overview}</Overview>
+                {isLoading ? <Loader /> : null}
+                {data?.results?.map((video: any) => (
+                    <VideoButton
+                        key={video.key}
+                        onPress={() => openYoutubeLink(video.key)}
+                    >
+                        <Ionicons name="logo-youtube" color="red" size={25} />
+                        <TestButton>{video.name}</TestButton>
+                    </VideoButton>
+                ))}
+            </Data>
         </Container>
     );
 }
