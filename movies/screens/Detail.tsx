@@ -3,8 +3,9 @@ import { useEffect } from "react";
 import styled from "styled-components/native";
 import Poster from "../components/Poster";
 import { Dimensions, StyleSheet } from "react-native";
-import { createImagePath } from "../api";
+import { createImagePath, getMovieDetail, getTVDetail } from "../api";
 import { LinearGradient } from "expo-linear-gradient";
+import { useQuery } from "react-query";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -44,6 +45,20 @@ export default function Detail({
     route: { params },
 }: any) {
     const title = params.original_title ?? params.original_name;
+    const { isLoading: movieDetailLoading, data: movieDetailData } = useQuery(
+        ["movies", params.id],
+        () => getMovieDetail(params.id),
+        {
+            enabled: "original_title" in params,
+        }
+    );
+    const { isLoading: tvDetailLoading, data: tvDetailData } = useQuery(
+        ["tv", params.id],
+        () => getTVDetail(params.id),
+        {
+            enabled: "original_name" in params,
+        }
+    );
 
     useEffect(() => {
         setOptions({
