@@ -13,7 +13,7 @@ import {
     View,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useQuery, useQueryClient } from "react-query";
+import { useInfiniteQuery, useQuery, useQueryClient } from "react-query";
 import {
     getNowPlayingMovieList,
     getPopularMovieList,
@@ -56,10 +56,10 @@ export default function Movies({ navigation }: MoviesProps) {
         ["movies", "upComming"],
         () => getUpComingMovieList(1)
     );
-    const { isLoading: popularLoading, data: popularData } = useQuery<IData>(
-        ["movies", "popular"],
-        () => getPopularMovieList(1)
-    );
+    const { isLoading: popularLoading, data: popularData } =
+        useInfiniteQuery<IData>(["movies", "popular"], () =>
+            getPopularMovieList(1)
+        );
 
     function onRefresh() {
         console.log("onRefresh");
@@ -82,15 +82,21 @@ export default function Movies({ navigation }: MoviesProps) {
         );
     }
 
+    function loadMore() {
+        alert("load more");
+    }
+
     const isLoading = nowPlayingLoading || upComingLoading || popularLoading;
 
     return isLoading ? (
         <Loader />
     ) : (
         <FlatList
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.4}
             onRefresh={onRefresh}
             refreshing={isRefreshing}
-            data={popularData?.results}
+            data={popularData?.pages.map((page) => page.results).flat()}
             keyExtractor={(item) => item.id + ""}
             ItemSeparatorComponent={VSeparator}
             renderItem={renderVList}
