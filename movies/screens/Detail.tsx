@@ -2,7 +2,14 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect } from "react";
 import styled from "styled-components/native";
 import Poster from "../components/Poster";
-import { Dimensions, StyleSheet, Linking } from "react-native";
+import {
+    Dimensions,
+    StyleSheet,
+    Linking,
+    TouchableOpacity,
+    Share,
+    Platform,
+} from "react-native";
 import { createImagePath, getMovieVideoInfo, getTVVideoInfo } from "../api";
 import { useQuery } from "react-query";
 import Loader from "../components/Loader";
@@ -75,11 +82,46 @@ export default function Detail({
         await Linking.openURL(baseURL);
     }
 
+    async function shareMedia() {
+        const isAndroid = Platform.OS === "android";
+        const homepage = isMovie
+            ? `https://www.imdb.com/title/${data.imdb_id}`
+            : data.homepage;
+
+        if (isAndroid) {
+            await Share.share({
+                message: `${params.overview}\nCheck in out: ${homepage}`,
+                title: params.original_title ?? params.original_name,
+            });
+        } else {
+            await Share.share({
+                url: homepage,
+                message: params.overview,
+                title: params.original_title ?? params.original_name,
+            });
+        }
+    }
+
+    function ShareButton() {
+        return (
+            <TouchableOpacity onPress={shareMedia}>
+                <Ionicons name="share-outline" color="gray" size={25} />
+            </TouchableOpacity>
+        );
+    }
+
     useEffect(() => {
         setOptions({
             title: "original_title" in params ? "Movie" : "TV Show",
         });
     }, []);
+    useEffect(() => {
+        if (data) {
+            setOptions({
+                headerRight: () => <ShareButton />,
+            });
+        }
+    }, [data]);
 
     return (
         <Container>
