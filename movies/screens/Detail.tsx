@@ -2,9 +2,41 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect } from "react";
 import styled from "styled-components/native";
 import Poster from "../components/Poster";
+import { Dimensions, StyleSheet } from "react-native";
+import { createImagePath } from "../api";
+import { LinearGradient } from "expo-linear-gradient";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Container = styled.ScrollView`
     background-color: ${(props) => props.theme.mainBackgroundColor};
+`;
+
+const Header = styled.View`
+    height: ${SCREEN_HEIGHT * 0.25}px;
+    justify-content: flex-end;
+    padding: 0px 20px;
+`;
+
+const Background = styled.Image``;
+
+const Column = styled.View`
+    flex-direction: row;
+    width: 80%;
+`;
+
+const Title = styled.Text`
+    color: ${(props) => props.theme.textColor};
+    font-size: 30px;
+    align-self: flex-end;
+    margin-left: 15px;
+    font-weight: bold;
+`;
+
+const Overview = styled.Text`
+    color: ${(props) => props.theme.textColor};
+    margin-top: 20px;
+    padding: 0px 20px;
 `;
 
 export default function Detail({
@@ -15,13 +47,26 @@ export default function Detail({
 
     useEffect(() => {
         setOptions({
-            title: title,
+            title: "original_title" in params ? "Movie" : "TV Show",
         });
     }, []);
 
     return (
         <Container>
-            <Poster poster_path={params.poster_path || ""} />
+            <Header>
+                <Background
+                    style={StyleSheet.absoluteFill}
+                    source={{
+                        uri: createImagePath(params.backdrop_path || ""),
+                    }}
+                />
+
+                <Column>
+                    <Poster poster_path={params.poster_path || ""} />
+                    <Title>{title}</Title>
+                </Column>
+            </Header>
+            <Overview>{params.overview}</Overview>
         </Container>
     );
 }
