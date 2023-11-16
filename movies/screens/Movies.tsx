@@ -39,8 +39,13 @@ export default function Movies({ navigation }: MoviesProps) {
     const queryClient = useQueryClient();
     const [isRefreshing, setIsRefreshing] = useState(false);
 
-    function goToDetail() {
-        navigation.navigate("Stack", { screen: "Detail" });
+    function goToDetail(original_title: string) {
+        navigation.navigate("Stack", {
+            screen: "Detail",
+            params: {
+                original_title,
+            },
+        });
     }
 
     const { isLoading: nowPlayingLoading, data: nowPlayingData } =
@@ -66,7 +71,7 @@ export default function Movies({ navigation }: MoviesProps) {
 
     function renderVList({ item }: any) {
         return (
-            <TouchableOpacity onPress={goToDetail}>
+            <TouchableOpacity onPress={() => goToDetail(item.original_title)}>
                 <VList
                     key={item.id}
                     poster_path={item.poster_path}

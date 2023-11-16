@@ -29,7 +29,12 @@ export default function HMedia({
     const navigation = useNavigation();
 
     function goToDetail() {
-        navigation.navigate("Stack", { screen: "Detail" });
+        navigation.navigate("Stack", {
+            screen: "Detail",
+            params: {
+                original_title,
+            },
+        });
     }
 
     return (
