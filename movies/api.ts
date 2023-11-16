@@ -22,7 +22,7 @@ export async function getNowPlayingMovieList(page: number) {
     ).then((response) => response.json());
 }
 
-export async function getPopularMovieList(page: number) {
+export async function getPopularMovieList({ pageParam }: any) {
     const options = {
         method: "GET",
         headers: {
@@ -33,7 +33,9 @@ export async function getPopularMovieList(page: number) {
     };
 
     return fetch(
-        `https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=${page}`,
+        `https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=${
+            pageParam ?? 1
+        }`,
         options
     ).then((response) => response.json());
 }
