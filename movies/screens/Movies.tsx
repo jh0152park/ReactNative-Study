@@ -56,10 +56,19 @@ export default function Movies({ navigation }: MoviesProps) {
         ["movies", "upComming"],
         () => getUpComingMovieList(1)
     );
-    const { isLoading: popularLoading, data: popularData } =
-        useInfiniteQuery<IData>(["movies", "popular"], () =>
-            getPopularMovieList(1)
-        );
+    const {
+        isLoading: popularLoading,
+        data: popularData,
+        hasNextPage,
+        fetchNextPage,
+    } = useInfiniteQuery<any>(["movies", "popular"], getPopularMovieList, {
+        getNextPageParam: (currentPage) => {
+            const nextPage = currentPage.page + 1;
+            return nextPage > currentPage.total_pages
+                ? null
+                : currentPage.page + 1;
+        },
+    });
 
     function onRefresh() {
         console.log("onRefresh");
@@ -83,7 +92,9 @@ export default function Movies({ navigation }: MoviesProps) {
     }
 
     function loadMore() {
-        alert("load more");
+        if (hasNextPage) {
+            fetchNextPage();
+        }
     }
 
     const isLoading = nowPlayingLoading || upComingLoading || popularLoading;
@@ -93,7 +104,6 @@ export default function Movies({ navigation }: MoviesProps) {
     ) : (
         <FlatList
             onEndReached={loadMore}
-            onEndReachedThreshold={0.4}
             onRefresh={onRefresh}
             refreshing={isRefreshing}
             data={popularData?.pages.map((page) => page.results).flat()}
