@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, TouchableOpacity} from 'react-native';
+import {Animated, Pressable, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 
 const Container = styled.View`
@@ -9,7 +9,7 @@ const Container = styled.View`
 `;
 
 const Box = styled.View`
-  background-color: tomato;
+  background-color: teal;
   width: 200px;
   height: 200px;
 `;
@@ -18,28 +18,39 @@ const AnimatedBox = Animated.createAnimatedComponent(Box);
 
 function App() {
   const [up, setUp] = useState(false);
-  const Y = useRef(new Animated.Value(0)).current;
+  const POSITION = useRef(new Animated.ValueXY({x: 0, y: 250})).current;
+  const rotation = POSITION.y.interpolate({
+    inputRange: [-250, 250],
+    outputRange: ['-360deg', '360deg'],
+  });
+
+  const BGColor = POSITION.y.interpolate({
+    inputRange: [-250, 250],
+    outputRange: ['rgb(246, 250, 45)', 'rgb(83, 255, 71)'],
+  });
 
   function toggleUp() {
     setUp(prev => !prev);
   }
 
   function moveUp() {
-    Animated.timing(Y, {
-      toValue: up ? 200 : -200,
+    Animated.timing(POSITION, {
+      toValue: up ? 250 : -250,
       useNativeDriver: true,
+      duration: 1000,
     }).start(toggleUp);
   }
 
   return (
     <Container>
-      <TouchableOpacity onPress={moveUp}>
+      <Pressable onPress={moveUp}>
         <AnimatedBox
           style={{
-            transform: [{translateY: Y}],
+            backgroundColor: BGColor,
+            transform: [{translateY: POSITION.y}, {rotateY: rotation}],
           }}
         />
-      </TouchableOpacity>
+      </Pressable>
     </Container>
   );
 }
