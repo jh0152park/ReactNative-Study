@@ -39,6 +39,16 @@ function App() {
                     y: dy,
                 });
             },
+            onPanResponderRelease: () => {
+                Animated.spring(POSITION, {
+                    toValue: {
+                        x: 0,
+                        y: 0,
+                    },
+                    bounciness: 20,
+                    useNativeDriver: false,
+                }).start();
+            },
         }),
     ).current;
 
@@ -61,7 +71,7 @@ function App() {
                     {...panResponder.panHandlers}
                     style={{
                         backgroundColor: BGColor,
-                        transform: [...POSITION.getTranslateTransform()],
+                        transform: POSITION.getTranslateTransform(),
                     }}
                 />
             </Pressable>
