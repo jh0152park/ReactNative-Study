@@ -1,5 +1,11 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Animated, Dimensions, Pressable, TouchableOpacity} from "react-native";
+import {
+    Animated,
+    Dimensions,
+    PanResponder,
+    Pressable,
+    TouchableOpacity,
+} from "react-native";
 import styled from "styled-components/native";
 
 const Container = styled.View`
@@ -17,13 +23,22 @@ const Box = styled.View`
 const AnimatedBox = Animated.createAnimatedComponent(Box);
 
 function App() {
-    const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} =
-        Dimensions.get("window");
-
     const POSITION = useRef(
         new Animated.ValueXY({
-            x: -SCREEN_WIDTH / 2 + 100,
-            y: -SCREEN_HEIGHT / 2 + 100,
+            x: 0,
+            y: 0,
+        }),
+    ).current;
+
+    const panResponder = useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onPanResponderMove: (_, {dx, dy}) => {
+                POSITION.setValue({
+                    x: dx,
+                    y: dy,
+                });
+            },
         }),
     ).current;
 
@@ -37,48 +52,13 @@ function App() {
         outputRange: ["rgb(246, 250, 45)", "rgb(83, 255, 71)"],
     });
 
-    const topLeft = Animated.timing(POSITION, {
-        toValue: {
-            x: -SCREEN_WIDTH / 2 + 100,
-            y: -SCREEN_HEIGHT / 2 + 100,
-        },
-        useNativeDriver: false,
-    });
-
-    const bottomLeft = Animated.timing(POSITION, {
-        toValue: {
-            x: -SCREEN_WIDTH / 2 + 100,
-            y: SCREEN_HEIGHT / 2 - 100,
-        },
-        useNativeDriver: false,
-    });
-
-    const bottomRight = Animated.timing(POSITION, {
-        toValue: {
-            x: SCREEN_WIDTH / 2 - 100,
-            y: SCREEN_HEIGHT / 2 - 100,
-        },
-        useNativeDriver: false,
-    });
-
-    const topRight = Animated.timing(POSITION, {
-        toValue: {
-            x: SCREEN_WIDTH / 2 - 100,
-            y: -SCREEN_HEIGHT / 2 + 100,
-        },
-        useNativeDriver: false,
-    });
-
-    function moveUp() {
-        Animated.loop(
-            Animated.sequence([bottomLeft, bottomRight, topRight, topLeft]),
-        ).start();
-    }
+    function moveUp() {}
 
     return (
         <Container>
             <Pressable onPress={moveUp}>
                 <AnimatedBox
+                    {...panResponder.panHandlers}
                     style={{
                         backgroundColor: BGColor,
                         transform: [...POSITION.getTranslateTransform()],
