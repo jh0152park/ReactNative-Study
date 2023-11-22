@@ -18,6 +18,24 @@ const Card = styled(Animated.createAnimatedComponent(View))`
     align-items: center;
     border-radius: 50px;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+    position: absolute;
+`;
+
+const CardContainer = styled.View`
+    flex: 3;
+    justify-content: center;
+    align-items: center;
+`;
+
+const Button = styled.TouchableOpacity`
+    margin: 0px 10px;
+`;
+
+const ButtonContainer = styled.View`
+    flex-direction: row;
+    flex: 1;
+
+    /* margin-top: 50px; */
 `;
 
 function App() {
@@ -26,9 +44,15 @@ function App() {
     const position = useRef(new Animated.Value(0)).current;
 
     const rotation = position.interpolate({
-        inputRange: [-250, 0, 250],
-        outputRange: ["-30deg", "0deg", "30deg"],
+        inputRange: [-250, 250],
+        outputRange: ["-30deg", "30deg"],
         extrapolate: "extend",
+    });
+
+    const backCardScale = position.interpolate({
+        inputRange: [-300, 0, 300],
+        outputRange: [1, 0.5, 1],
+        extrapolate: "clamp",
     });
 
     const onPressOut = Animated.spring(scale, {
@@ -46,6 +70,18 @@ function App() {
         useNativeDriver: true,
     });
 
+    const disappearLeft = Animated.spring(position, {
+        toValue: -500,
+        tension: 10,
+        useNativeDriver: true,
+    });
+
+    const disappearRight = Animated.spring(position, {
+        toValue: 500,
+        tension: 10,
+        useNativeDriver: true,
+    });
+
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -53,11 +89,8 @@ function App() {
             onPanResponderGrant: () => onPressIn.start(),
 
             onPanResponderRelease: (_, {dx, dy}) => {
-                if (Math.abs(dx) >= 300) {
-                    Animated.spring(position, {
-                        toValue: dx > 0 ? 500 : -500,
-                        useNativeDriver: true,
-                    }).start();
+                if (Math.abs(dx) >= 250) {
+                    dx > 0 ? disappearRight.start() : disappearLeft.start();
                 } else {
                     Animated.parallel([onPressOut, goCenter]).start();
                 }
@@ -69,19 +102,48 @@ function App() {
         }),
     ).current;
 
+    function closePress() {
+        disappearLeft.start();
+    }
+
+    function checkPreess() {
+        disappearRight.start();
+    }
+
     return (
         <Container>
-            <Card
-                {...panResponder.panHandlers}
-                style={{
-                    transform: [
-                        {scale: scale},
-                        {translateX: position},
-                        {rotateZ: rotation},
-                    ],
-                }}>
-                <Ionicons name="pizza" color={"#192a56"} size={98} />
-            </Card>
+            <CardContainer>
+                <Card
+                    style={{
+                        transform: [
+                            {
+                                scale: backCardScale,
+                            },
+                        ],
+                    }}>
+                    <Ionicons name="beer" color={"#192a56"} size={98} />
+                </Card>
+                <Card
+                    {...panResponder.panHandlers}
+                    style={{
+                        transform: [
+                            {scale: scale},
+                            {translateX: position},
+                            {rotateZ: rotation},
+                        ],
+                    }}>
+                    <Ionicons name="pizza" color={"#192a56"} size={98} />
+                </Card>
+            </CardContainer>
+
+            <ButtonContainer>
+                <Button onPress={closePress}>
+                    <Ionicons name="close-circle" color="white" size={58} />
+                </Button>
+                <Button onPress={checkPreess}>
+                    <Ionicons name="checkmark-circle" color="white" size={58} />
+                </Button>
+            </ButtonContainer>
         </Container>
     );
 }
