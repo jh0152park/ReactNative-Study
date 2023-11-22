@@ -77,6 +77,8 @@ function App() {
         toValue: -500,
         tension: 10,
         useNativeDriver: true,
+        restSpeedThreshold: 100,
+        restDisplacementThreshold: 100,
     });
 
     const disappearRight = Animated.spring(position, {
