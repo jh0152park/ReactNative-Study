@@ -1,7 +1,8 @@
 import {styled} from "styled-components/native";
 import {Ionicons} from "@expo/vector-icons";
 import {Animated, PanResponder, View} from "react-native";
-import {useRef} from "react";
+import {useRef, useState} from "react";
+import icons from "./icons";
 
 const Container = styled.View`
     flex: 1;
@@ -39,6 +40,8 @@ const ButtonContainer = styled.View`
 `;
 
 function App() {
+    const [index, setIndex] = useState(0);
+
     const scale = useRef(new Animated.Value(1)).current;
 
     const position = useRef(new Animated.Value(0)).current;
@@ -90,7 +93,7 @@ function App() {
 
             onPanResponderRelease: (_, {dx, dy}) => {
                 if (Math.abs(dx) >= 250) {
-                    dx > 0 ? disappearRight.start() : disappearLeft.start();
+                    dx > 0 ? checkPreess() : closePress();
                 } else {
                     Animated.parallel([onPressOut, goCenter]).start();
                 }
@@ -103,17 +106,24 @@ function App() {
     ).current;
 
     function closePress() {
-        disappearLeft.start();
+        disappearLeft.start(onCardDisappear);
     }
 
     function checkPreess() {
-        disappearRight.start();
+        disappearRight.start(onCardDisappear);
+    }
+
+    function onCardDisappear() {
+        scale.setValue(1);
+        position.setValue(0);
+        setIndex(prev => prev + 1);
     }
 
     return (
         <Container>
             <CardContainer>
                 <Card
+                    {...panResponder.panHandlers}
                     style={{
                         transform: [
                             {
@@ -121,7 +131,11 @@ function App() {
                             },
                         ],
                     }}>
-                    <Ionicons name="beer" color={"#192a56"} size={98} />
+                    <Ionicons
+                        name={icons[index + 1]}
+                        color={"#192a56"}
+                        size={98}
+                    />
                 </Card>
                 <Card
                     {...panResponder.panHandlers}
@@ -132,7 +146,7 @@ function App() {
                             {rotateZ: rotation},
                         ],
                     }}>
-                    <Ionicons name="pizza" color={"#192a56"} size={98} />
+                    <Ionicons name={icons[index]} color={"#192a56"} size={98} />
                 </Card>
             </CardContainer>
 
