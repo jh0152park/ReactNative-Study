@@ -1,61 +1,64 @@
 import {styled} from "styled-components/native";
 import {Ionicons} from "@expo/vector-icons";
+import {useRef} from "react";
 import {Animated, PanResponder, View} from "react-native";
-import {useRef, useState} from "react";
-import icons from "./icons";
+
+const BLACK = "#1e272e";
+const GREY = "#485460";
+const GREEN = "#2ecc71";
+const RED = "#e74c3c";
 
 const Container = styled.View`
     flex: 1;
-    justify-content: center;
-    align-items: center;
-    background-color: #00a8ff;
+    background-color: ${BLACK};
 `;
 
-const Card = styled(Animated.createAnimatedComponent(View))`
-    background-color: white;
-    width: 300px;
-    height: 300px;
+const Edge = styled.View`
+    flex: 1;
+
     justify-content: center;
     align-items: center;
-    border-radius: 50px;
-    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
-    position: absolute;
 `;
 
-const CardContainer = styled.View`
+const Center = styled.View`
     flex: 3;
     justify-content: center;
     align-items: center;
 `;
 
-const Button = styled.TouchableOpacity`
-    margin: 0px 10px;
+const Word = styled.Text`
+    font-size: 38px;
+    font-weight: bold;
 `;
 
-const ButtonContainer = styled.View`
-    flex-direction: row;
-    flex: 1;
+const WordContainer = styled(Animated.createAnimatedComponent(View))`
+    background-color: ${GREY};
+    width: 100px;
+    height: 100px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50px;
+`;
 
-    /* margin-top: 50px; */
+const IconCard = styled(Animated.createAnimatedComponent(View))`
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 10px;
 `;
 
 function App() {
-    const [index, setIndex] = useState(0);
-
     const scale = useRef(new Animated.Value(1)).current;
 
-    const position = useRef(new Animated.Value(0)).current;
+    const position = useRef(
+        new Animated.ValueXY({
+            x: 0,
+            y: 0,
+        }),
+    ).current;
 
-    const rotation = position.interpolate({
-        inputRange: [-250, 250],
-        outputRange: ["-30deg", "30deg"],
-        extrapolate: "extend",
-    });
-
-    const backCardScale = position.interpolate({
-        inputRange: [-300, 0, 300],
-        outputRange: [1, 0.5, 1],
-        extrapolate: "clamp",
+    const onPressIn = Animated.spring(scale, {
+        toValue: 0.8,
+        useNativeDriver: true,
     });
 
     const onPressOut = Animated.spring(scale, {
@@ -63,27 +66,11 @@ function App() {
         useNativeDriver: true,
     });
 
-    const onPressIn = Animated.spring(scale, {
-        toValue: 0.95,
-        useNativeDriver: true,
-    });
-
-    const goCenter = Animated.spring(position, {
-        toValue: 0,
-        useNativeDriver: true,
-    });
-
-    const disappearLeft = Animated.spring(position, {
-        toValue: -500,
-        tension: 10,
-        useNativeDriver: true,
-        restSpeedThreshold: 100,
-        restDisplacementThreshold: 100,
-    });
-
-    const disappearRight = Animated.spring(position, {
-        toValue: 500,
-        tension: 10,
+    const backToInit = Animated.spring(position, {
+        toValue: {
+            x: 0,
+            y: 0,
+        },
         useNativeDriver: true,
     });
 
@@ -91,75 +78,51 @@ function App() {
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
 
-            onPanResponderGrant: () => onPressIn.start(),
-
-            onPanResponderRelease: (_, {dx, dy}) => {
-                if (Math.abs(dx) >= 250) {
-                    dx > 0 ? checkPreess() : closePress();
-                } else {
-                    Animated.parallel([onPressOut, goCenter]).start();
-                }
+            onPanResponderGrant: (e, gestureState) => {
+                onPressIn.start();
             },
 
-            onPanResponderMove: (_, {dx, dy}) => {
-                position.setValue(dx);
+            onPanResponderRelease: () => {
+                Animated.parallel([onPressOut, backToInit]).start();
+            },
+
+            onPanResponderMove: (e, gestureState) => {
+                const dx = gestureState.dx;
+                const dy = gestureState.dy;
+                position.setValue({
+                    x: dx,
+                    y: dy,
+                });
             },
         }),
     ).current;
 
-    function closePress() {
-        disappearLeft.start(onCardDisappear);
-    }
-
-    function checkPreess() {
-        disappearRight.start(onCardDisappear);
-    }
-
-    function onCardDisappear() {
-        scale.setValue(1);
-        position.setValue(0);
-        setIndex(prev => prev + 1);
-    }
-
     return (
         <Container>
-            <CardContainer>
-                <Card
+            <Edge>
+                <WordContainer>
+                    <Word style={{color: GREEN}}>알아</Word>
+                </WordContainer>
+            </Edge>
+            <Center>
+                <IconCard
                     {...panResponder.panHandlers}
                     style={{
                         transform: [
                             {
-                                scale: backCardScale,
+                                scale: scale,
                             },
+                            ...position.getTranslateTransform(),
                         ],
                     }}>
-                    <Ionicons
-                        name={icons[index + 1]}
-                        color={"#192a56"}
-                        size={98}
-                    />
-                </Card>
-                <Card
-                    {...panResponder.panHandlers}
-                    style={{
-                        transform: [
-                            {scale: scale},
-                            {translateX: position},
-                            {rotateZ: rotation},
-                        ],
-                    }}>
-                    <Ionicons name={icons[index]} color={"#192a56"} size={98} />
-                </Card>
-            </CardContainer>
-
-            <ButtonContainer>
-                <Button onPress={closePress}>
-                    <Ionicons name="close-circle" color="white" size={58} />
-                </Button>
-                <Button onPress={checkPreess}>
-                    <Ionicons name="checkmark-circle" color="white" size={58} />
-                </Button>
-            </ButtonContainer>
+                    <Ionicons name="beer" color={GREY} size={76} />
+                </IconCard>
+            </Center>
+            <Edge>
+                <WordContainer>
+                    <Word style={{color: RED}}>몰라</Word>
+                </WordContainer>
+            </Edge>
         </Container>
     );
 }
