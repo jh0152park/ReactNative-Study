@@ -1,7 +1,8 @@
 import {styled} from "styled-components/native";
 import {Ionicons} from "@expo/vector-icons";
-import {useRef} from "react";
+import {useRef, useState} from "react";
 import {Animated, Easing, PanResponder, View} from "react-native";
+import icons from "./icons";
 
 const BLACK = "#1e272e";
 const GREY = "#485460";
@@ -49,6 +50,8 @@ const IconCard = styled(Animated.createAnimatedComponent(View))`
 `;
 
 function App() {
+    const [index, setIndex] = useState(0);
+
     const scale = useRef(new Animated.Value(1)).current;
 
     const position = useRef(
@@ -114,6 +117,16 @@ function App() {
         duration: 100,
     });
 
+    const restoreScale = Animated.spring(scale, {
+        toValue: 1,
+        useNativeDriver: true,
+    });
+
+    const restoreOpacity = Animated.spring(opacity, {
+        toValue: 1,
+        useNativeDriver: true,
+    });
+
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -127,7 +140,7 @@ function App() {
                     Animated.sequence([
                         Animated.parallel([onDropScale, onDropOpacity]),
                         backToHome,
-                    ]).start();
+                    ]).start(nextIcon);
                 } else {
                     Animated.parallel([onPressOut, backToInit]).start();
                 }
@@ -143,6 +156,11 @@ function App() {
             },
         }),
     ).current;
+
+    function nextIcon() {
+        setIndex(prev => prev + 1);
+        Animated.parallel([restoreOpacity, restoreScale]).start();
+    }
 
     return (
         <Container>
@@ -170,7 +188,7 @@ function App() {
                             },
                         ],
                     }}>
-                    <Ionicons name="beer" color={GREY} size={76} />
+                    <Ionicons name={icons[index]} color={GREY} size={76} />
                 </IconCard>
             </Center>
             <Edge>
