@@ -33,6 +33,12 @@ function App() {
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
+            onPanResponderGrant: () => {
+                POSITION.setOffset({
+                    x: POSITION.x._value,
+                    y: POSITION.y._value,
+                });
+            },
             onPanResponderMove: (_, {dx, dy}) => {
                 POSITION.setValue({
                     x: dx,
@@ -40,14 +46,7 @@ function App() {
                 });
             },
             onPanResponderRelease: () => {
-                Animated.spring(POSITION, {
-                    toValue: {
-                        x: 0,
-                        y: 0,
-                    },
-                    bounciness: 20,
-                    useNativeDriver: false,
-                }).start();
+                POSITION.flattenOffset();
             },
         }),
     ).current;
