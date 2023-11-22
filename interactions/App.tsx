@@ -1,7 +1,7 @@
 import {styled} from "styled-components/native";
 import {Ionicons} from "@expo/vector-icons";
 import {useRef} from "react";
-import {Animated, PanResponder, View} from "react-native";
+import {Animated, Easing, PanResponder, View} from "react-native";
 
 const BLACK = "#1e272e";
 const GREY = "#485460";
@@ -24,6 +24,7 @@ const Center = styled.View`
     flex: 3;
     justify-content: center;
     align-items: center;
+    z-index: 10;
 `;
 
 const Word = styled.Text`
@@ -44,6 +45,7 @@ const IconCard = styled(Animated.createAnimatedComponent(View))`
     background-color: white;
     padding: 5px 10px;
     border-radius: 10px;
+    z-index: 10;
 `;
 
 function App() {
@@ -55,6 +57,8 @@ function App() {
             y: 0,
         }),
     ).current;
+
+    const opacity = useRef(new Animated.Value(1)).current;
 
     const onPressIn = Animated.spring(scale, {
         toValue: 0.8,
@@ -74,6 +78,42 @@ function App() {
         useNativeDriver: true,
     });
 
+    const backToHome = Animated.timing(position, {
+        toValue: {
+            x: 0,
+            y: 0,
+        },
+        easing: Easing.linear,
+        duration: 100,
+        useNativeDriver: true,
+    });
+
+    const upWordScale = position.y.interpolate({
+        inputRange: [-300, -80],
+        outputRange: [2, 1],
+        extrapolate: "clamp",
+    });
+
+    const downWordScale = position.y.interpolate({
+        inputRange: [80, 300],
+        outputRange: [1, 2],
+        extrapolate: "clamp",
+    });
+
+    const onDropScale = Animated.timing(scale, {
+        toValue: 0,
+        useNativeDriver: true,
+        easing: Easing.linear,
+        duration: 100,
+    });
+
+    const onDropOpacity = Animated.timing(opacity, {
+        toValue: 0,
+        useNativeDriver: true,
+        easing: Easing.linear,
+        duration: 100,
+    });
+
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -82,8 +122,15 @@ function App() {
                 onPressIn.start();
             },
 
-            onPanResponderRelease: () => {
-                Animated.parallel([onPressOut, backToInit]).start();
+            onPanResponderRelease: (_, {dy}) => {
+                if (Math.abs(dy) >= 250) {
+                    Animated.sequence([
+                        Animated.parallel([onDropScale, onDropOpacity]),
+                        backToHome,
+                    ]).start();
+                } else {
+                    Animated.parallel([onPressOut, backToInit]).start();
+                }
             },
 
             onPanResponderMove: (e, gestureState) => {
@@ -100,7 +147,14 @@ function App() {
     return (
         <Container>
             <Edge>
-                <WordContainer>
+                <WordContainer
+                    style={{
+                        transform: [
+                            {
+                                scale: upWordScale,
+                            },
+                        ],
+                    }}>
                     <Word style={{color: GREEN}}>알아</Word>
                 </WordContainer>
             </Edge>
@@ -108,18 +162,22 @@ function App() {
                 <IconCard
                     {...panResponder.panHandlers}
                     style={{
+                        opacity: opacity,
                         transform: [
+                            ...position.getTranslateTransform(),
                             {
                                 scale: scale,
                             },
-                            ...position.getTranslateTransform(),
                         ],
                     }}>
                     <Ionicons name="beer" color={GREY} size={76} />
                 </IconCard>
             </Center>
             <Edge>
-                <WordContainer>
+                <WordContainer
+                    style={{
+                        transform: [{scale: downWordScale}],
+                    }}>
                     <Word style={{color: RED}}>몰라</Word>
                 </WordContainer>
             </Edge>
