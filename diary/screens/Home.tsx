@@ -6,8 +6,8 @@ const View = styled.View`
     flex: 1;
     background-color: ${COLORS.BGColor};
     padding-top: 100px;
-    padding-left: 50px;
-    padding-right: 50px;
+    padding-left: 30px;
+    padding-right: 30px;
 `;
 
 const Title = styled.Text`
