@@ -1,6 +1,6 @@
 export const COLORS = {
-    BGColor: "#ffda79",
-    textColor: "#34ace0",
+    BGColor: "#f2faf4",
+    textColor: "#291e5f",
     cardColor: "#f7f1e3",
-    buttonColor: "#706fd3",
+    buttonColor: "#291e5f",
 };
