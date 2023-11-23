@@ -1,7 +1,8 @@
 import styled from "styled-components/native";
 import {COLORS} from "../colors";
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Alert} from "react-native";
+import {DBContext} from "../context";
 
 const View = styled.View`
     flex: 1;
@@ -60,8 +61,14 @@ const EmotionText = styled.Text`
 const emotioons = ["😎", "😭", "😂", "🤤", "🥰", "🤬", "😱"];
 
 export default function Write() {
+    const realm = useContext(DBContext);
+
     const [feeling, setFeeling] = useState("");
     const [selectedEmotion, setEmotion] = useState("");
+
+    useEffect(() => {
+        console.log("realm", realm);
+    }, []);
 
     function onChangeText(text: string) {
         setFeeling(text);

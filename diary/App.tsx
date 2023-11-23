@@ -1,8 +1,10 @@
-import {NavigationContainer} from "@react-navigation/native";
 import Navigator from "./navigator";
 import Realm from "realm";
-import AppLoading from "expo-app-loading";
-import {useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
+import {View} from "react-native";
+import {NavigationContainer} from "@react-navigation/native";
+import {DBContext} from "./context";
+import * as SplashScreen from "expo-splash-screen";
 
 const FeelingSchema = {
     name: "Feeling",
@@ -15,28 +17,35 @@ const FeelingSchema = {
 
 function App() {
     const [ready, setReady] = useState(false);
+    const [realm, setRealm] = useState<any>();
 
     async function startLaoding() {
-        const realm = await Realm.open({
+        const db = await Realm.open({
             path: "diaryDB",
             schema: [FeelingSchema],
         });
+        setRealm(db);
+        setReady(true);
     }
 
-    if (!ready) {
-        return (
-            <AppLoading
-                startAsync={startLaoding}
-                onFinish={() => setReady(true)}
-                onError={console.error}
-            />
-        );
-    }
+    useEffect(() => {
+        startLaoding();
+    }, []);
+
+    const onLayoutRootView = useCallback(async () => {
+        if (ready) await SplashScreen.hideAsync();
+    }, [ready]);
+
+    if (!ready) return null;
 
     return (
-        <NavigationContainer>
-            <Navigator />
-        </NavigationContainer>
+        <DBContext.Provider value={realm}>
+            <NavigationContainer>
+                <View onLayout={onLayoutRootView}>
+                    <Navigator />
+                </View>
+            </NavigationContainer>
+        </DBContext.Provider>
     );
 }
 
