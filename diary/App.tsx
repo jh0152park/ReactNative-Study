@@ -20,12 +20,16 @@ function App() {
     const [realm, setRealm] = useState<any>();
 
     async function startLaoding() {
-        const db = await Realm.open({
-            path: "diaryDB",
-            schema: [FeelingSchema],
-        });
-        setRealm(db);
-        setReady(true);
+        try {
+            const db = await Realm.open({
+                path: "diaryDB",
+                schema: [FeelingSchema],
+            });
+            setRealm(db);
+        } finally {
+            setReady(true);
+        }
+        // console.log("start Loading");
     }
 
     useEffect(() => {
@@ -33,19 +37,22 @@ function App() {
     }, []);
 
     const onLayoutRootView = useCallback(async () => {
-        if (ready) await SplashScreen.hideAsync();
+        if (ready) {
+            await SplashScreen.hideAsync();
+            console.log("hide async");
+        }
     }, [ready]);
 
     if (!ready) return null;
 
     return (
-        <DBContext.Provider value={realm}>
-            <NavigationContainer>
-                <View onLayout={onLayoutRootView}>
+        <View style={{flex: 1}} onLayout={onLayoutRootView}>
+            <DBContext.Provider value={realm}>
+                <NavigationContainer>
                     <Navigator />
-                </View>
-            </NavigationContainer>
-        </DBContext.Provider>
+                </NavigationContainer>
+            </DBContext.Provider>
+        </View>
     );
 }
 
