@@ -2,7 +2,7 @@ import styled from "styled-components/native";
 import {COLORS} from "../colors";
 import {useContext, useEffect, useState} from "react";
 import {Alert} from "react-native";
-import {DBContext} from "../context";
+import {DBContext, useDB} from "../context";
 
 const View = styled.View`
     flex: 1;
@@ -60,15 +60,15 @@ const EmotionText = styled.Text`
 
 const emotioons = ["😎", "😭", "😂", "🤤", "🥰", "🤬", "😱"];
 
-export default function Write() {
-    const realm = useContext(DBContext);
+export default function Write({navigation: {goBack}}: any) {
+    const realm = useContext<any>(DBContext);
 
     const [feeling, setFeeling] = useState("");
     const [selectedEmotion, setEmotion] = useState("");
 
-    useEffect(() => {
-        console.log("realm", realm);
-    }, []);
+    // useEffect(() => {
+    //     console.log(realm);
+    // }, []);
 
     function onChangeText(text: string) {
         setFeeling(text);
@@ -82,6 +82,19 @@ export default function Write() {
     function onSubmit() {
         if (feeling === "") {
             return Alert.alert("Please write down what your feel");
+        }
+
+        if (realm) {
+            const f = realm.write(() => {
+                realm.create("Feeling", {
+                    _id: Date.now(),
+                    message: feeling,
+                });
+            });
+            console.log(realm.objects("Feeling"));
+            // setFeeling("");
+            // setEmotion("");
+            goBack();
         }
     }
 
