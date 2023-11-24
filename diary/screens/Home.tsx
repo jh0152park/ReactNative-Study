@@ -3,7 +3,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import {COLORS} from "../colors";
 import {DBContext} from "../context";
 import {useContext, useEffect, useState} from "react";
-import {FlatList} from "react-native";
+import {FlatList, LayoutAnimation, TouchableOpacity} from "react-native";
 
 const View = styled.View`
     flex: 1;
@@ -52,16 +52,26 @@ export default function Home({navigation: {navigate}}: any) {
     const [feelings, setFeelings] = useState();
 
     useEffect(() => {
-        const feel = realm.objects("Feeling");
-        setFeelings(feel);
-        feel.addListener(() => {
-            console.log("new feeling change");
+        const feelings = realm.objects("Feeling");
+        // setFeelings(feel);
+        feelings.addListener((feelings: any, changes: any) => {
+            // console.log("new feeling change");
+            // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+            LayoutAnimation.spring();
+            setFeelings(feelings.sorted("_id", true));
         });
 
         return () => {
-            feel.removeAllListener();
+            feelings.removeAllListener();
         };
     }, []);
+
+    function onPress(id: number) {
+        realm.write(() => {
+            const target = realm.objectForPrimaryKey("Feeling", id);
+            realm.delete(target);
+        });
+    }
 
     return (
         <View>
@@ -73,9 +83,11 @@ export default function Home({navigation: {navigate}}: any) {
                 ItemSeparatorComponent={Separator}
                 contentContainerStyle={{paddingVertical: 10}}
                 renderItem={({item}) => (
-                    <Record>
-                        <Message>{item.message}</Message>
-                    </Record>
+                    <TouchableOpacity onPress={() => onPress(item._id)}>
+                        <Record>
+                            <Message>{item.message}</Message>
+                        </Record>
+                    </TouchableOpacity>
                 )}
             />
 
