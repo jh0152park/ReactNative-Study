@@ -1,0 +1,8 @@
+{
+    "name": "admob_test",
+    "displayName": "admob_test",
+    "react-native-google-mobile-ads": {
+        "android_app_id": "ca-app-pub-xxxxxxxx~xxxxxxxx",
+        "ios_app_id": "ca-app-pub-4268594967566553~3461492030"
+    }
+}
