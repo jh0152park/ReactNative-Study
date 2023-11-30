@@ -29,8 +29,14 @@ const interstitial = InterstitialAd.createForAdRequest(TestIds.INTERSTITIAL, {
     keywords: ["fashion", "clothing"],
 });
 
+const rewarded = RewardedAd.createForAdRequest(TestIds.REWARDED, {
+    requestNonPersonalizedAdsOnly: true,
+    keywords: ["fashion", "clothing"],
+});
+
 function App() {
     const [loaded, setLoaded] = useState(false);
+    const [rewardLoaded, setRewardLoaded] = useState(false);
 
     useEffect(() => {
         const unsubscribe = interstitial.addAdEventListener(
@@ -39,15 +45,32 @@ function App() {
                 setLoaded(true);
             },
         );
+        const unsubscribeLoaded = rewarded.addAdEventListener(
+            RewardedAdEventType.LOADED,
+            () => {
+                setRewardLoaded(true);
+            },
+        );
+        const unsubscribeEarned = rewarded.addAdEventListener(
+            RewardedAdEventType.EARNED_REWARD,
+            reward => {
+                console.log("User earned reward of ", reward);
+            },
+        );
 
         // Start loading the interstitial straight away
         interstitial.load();
+        rewarded.load();
 
         // Unsubscribe from events on unmount
-        return unsubscribe;
+        return () => {
+            unsubscribe;
+            unsubscribeLoaded();
+            unsubscribeEarned();
+        };
     }, []);
 
-    if (!loaded) {
+    if (!loaded || !rewardLoaded) {
         return null;
     }
 
@@ -60,6 +83,12 @@ function App() {
                 title="Show Interstitial"
                 onPress={() => {
                     interstitial.show();
+                }}
+            />
+            <Button
+                title="Show Rewarded Ad"
+                onPress={() => {
+                    rewarded.show();
                 }}
             />
         </Container>
