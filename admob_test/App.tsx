@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components/native";
 import {
     BannerAd,
@@ -9,7 +9,7 @@ import {
     RewardedAdEventType,
     BannerAdSize,
 } from "react-native-google-mobile-ads";
-import {Platform, UIManager} from "react-native";
+import {Button, Platform, UIManager} from "react-native";
 
 const Container = styled.View`
     flex: 1;
@@ -24,20 +24,44 @@ const Header = styled.Text`
     font-size: 38px;
 `;
 
-// if (
-//     Platform.OS === "android" &&
-//     UIManager.setLayoutAnimationEnabledExperimental
-// ) {
-//     UIManager.setLayoutAnimationEnabledExperimental(true);
-// }
+const interstitial = InterstitialAd.createForAdRequest(TestIds.INTERSTITIAL, {
+    requestNonPersonalizedAdsOnly: true,
+    keywords: ["fashion", "clothing"],
+});
 
-function App(): JSX.Element {
+function App() {
+    const [loaded, setLoaded] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = interstitial.addAdEventListener(
+            AdEventType.LOADED,
+            () => {
+                setLoaded(true);
+            },
+        );
+
+        // Start loading the interstitial straight away
+        interstitial.load();
+
+        // Unsubscribe from events on unmount
+        return unsubscribe;
+    }, []);
+
+    if (!loaded) {
+        return null;
+    }
+
     return (
         <Container>
             <Header>TEST</Header>
             <Header>Hello World!</Header>
             <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.FULL_BANNER} />
-            <BannerAd unitId={TestIds.BANNER} size={BannerAdSize.FULL_BANNER} />
+            <Button
+                title="Show Interstitial"
+                onPress={() => {
+                    interstitial.show();
+                }}
+            />
         </Container>
     );
 }
