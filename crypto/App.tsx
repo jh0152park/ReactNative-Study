@@ -5,6 +5,10 @@ import auth from "@react-native-firebase/auth";
 function App() {
     const user = auth().currentUser;
 
+    React.useEffect(() => {
+        console.log(auth().currentUser);
+    }, []);
+
     if (!user) {
         return <Text>Please login</Text>;
     }
