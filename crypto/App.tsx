@@ -1,39 +1,15 @@
-import React from "react";
-import {GluestackUIProvider, Heading} from "@gluestack-ui/themed";
-import {config} from "@gluestack-ui/config";
-import {ToastProvider} from "@gluestack-ui/toast";
-import {OverlayProvider} from "@gluestack-ui/overlay";
-import {SafeAreaProvider} from "react-native-safe-area-context";
-import {Text, View} from "react-native";
-import styled from "styled-components/native";
+import * as React from "react";
+import {Text} from "react-native";
+import auth from "@react-native-firebase/auth";
 
-const Container = styled.View`
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-`;
+function App() {
+    const user = auth().currentUser;
 
-function App(): JSX.Element {
-    return (
-        <GluestackUIProvider config={config}>
-            <SafeAreaProvider>
-                <ToastProvider>
-                    <OverlayProvider>
-                        <Container
-                            style={{
-                                flex: 1,
-                                width: "100%",
-                                justifyContent: "center",
-                                alignContent: "center",
-                            }}>
-                            <Heading>TEST</Heading>
-                            <Heading>YES DONE!</Heading>
-                        </Container>
-                    </OverlayProvider>
-                </ToastProvider>
-            </SafeAreaProvider>
-        </GluestackUIProvider>
-    );
+    if (!user) {
+        return <Text>Please login</Text>;
+    }
+
+    return <Text>Welcome {user.email}</Text>;
 }
 
 export default App;
