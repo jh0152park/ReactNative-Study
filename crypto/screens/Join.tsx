@@ -1,8 +1,9 @@
 import React, {useRef, useState} from "react";
-import {Dimensions, TextInput} from "react-native";
+import {ActivityIndicator, Alert, Dimensions, TextInput} from "react-native";
 import styled from "styled-components/native";
 import {Black} from "../colors";
 import {CreateAccount, Email, Password} from "../components/Buttons";
+import auth from "@react-native-firebase/auth";
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
@@ -28,11 +29,38 @@ const Text = styled.Text`
 
 export default function Join() {
     const passwordInput = useRef<any>();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     function setPasswordFoucs() {
-        passwordInput.current.focus();
+        passwordInput.current?.focus();
+    }
+
+    async function createAccount() {
+        if (email === "" || password === "") {
+            Alert.alert("Please enter email and password");
+            return;
+        }
+
+        if (loading) {
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await auth().createUserWithEmailAndPassword(email, password);
+        } catch (e: any) {
+            console.log(e.code);
+            switch (e.code) {
+                case "auth/weak-password": {
+                    Alert.alert("Write a strong password!");
+                }
+            }
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -56,10 +84,15 @@ export default function Join() {
                 returnKeyType="done"
                 value={password}
                 onChangeText={text => setPassword(text)}
+                onSubmitEditing={createAccount}
             />
 
-            <CreateAccount>
-                <Text>Create</Text>
+            <CreateAccount onPress={createAccount}>
+                {!loading ? (
+                    <Text>Create</Text>
+                ) : (
+                    <ActivityIndicator color="white" />
+                )}
             </CreateAccount>
         </Container>
     );
