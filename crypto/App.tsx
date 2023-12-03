@@ -4,6 +4,9 @@ import {NavigationContainer} from "@react-navigation/native";
 import {useEffect, useState} from "react";
 import InNav from "./navigators/InNav";
 import OutNav from "./navigators/OutNav";
+import {QueryClient, QueryClientProvider} from "react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,9 +22,11 @@ function App() {
     }, []);
 
     return (
-        <NavigationContainer>
-            {isLoggedIn ? <InNav /> : <OutNav />}
-        </NavigationContainer>
+        <QueryClientProvider client={queryClient}>
+            <NavigationContainer>
+                {isLoggedIn ? <InNav /> : <OutNav />}
+            </NavigationContainer>
+        </QueryClientProvider>
     );
 }
 

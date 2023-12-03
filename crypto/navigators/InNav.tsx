@@ -5,7 +5,10 @@ const Nav = createNativeStackNavigator();
 
 export default function InNav() {
     return (
-        <Nav.Navigator>
+        <Nav.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}>
             <Nav.Screen name="Home" component={Home}></Nav.Screen>
         </Nav.Navigator>
     );
