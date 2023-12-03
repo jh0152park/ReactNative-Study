@@ -21,3 +21,16 @@ export const Password = styled.TextInput`
     color: white;
     margin-bottom: 10px;
 `;
+
+export const CreateAccount = styled.TouchableOpacity`
+    width: 100%;
+    height: 40px;
+    border: none;
+    background-color: "rgb(145, 152, 229)";
+    border-radius: 20px;
+    color: white;
+    margin-bottom: 10px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+`;

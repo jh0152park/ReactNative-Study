@@ -1,42 +1,66 @@
 import React, {useRef, useState} from "react";
-import {TextInput} from "react-native";
+import {Dimensions, TextInput} from "react-native";
 import styled from "styled-components/native";
+import {Black} from "../colors";
+import {CreateAccount, Email, Password} from "../components/Buttons";
 
-const Container = styled.View``;
+const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
-const Text = styled.Text``;
+const Container = styled.View`
+    flex: 1;
+    background-color: ${Black};
+    padding: ${SCREEN_HEIGHT * 0.1}px ${SCREEN_WIDTH * 0.05}px;
+    align-items: center;
+`;
+
+const Header = styled.Text`
+    font-size: 38px;
+    font-weight: bold;
+    color: "rgb(145, 152, 229)";
+    margin-bottom: 50px;
+`;
+
+const Text = styled.Text`
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+`;
 
 export default function Join() {
     const passwordInput = useRef<any>();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    function onSubmitEditing() {
-        if (passwordInput) {
-            passwordInput.current.focus();
-        }
+    function setPasswordFoucs() {
+        passwordInput.current.focus();
     }
 
     return (
         <Container>
-            <TextInput
+            <Header>Create Account</Header>
+            <Email
                 placeholder="Email"
-                keyboardType="email-address"
+                placeholderTextColor="white"
                 autoCapitalize="none"
                 autoCorrect={false}
-                value={email}
                 returnKeyType="next"
+                value={email}
                 onChangeText={text => setEmail(text)}
-                onSubmitEditing={onSubmitEditing}
+                onSubmitEditing={setPasswordFoucs}
             />
-            <TextInput
+            <Password
                 ref={passwordInput}
                 placeholder="Password"
+                placeholderTextColor="white"
                 secureTextEntry
-                value={password}
                 returnKeyType="done"
+                value={password}
                 onChangeText={text => setPassword(text)}
             />
+
+            <CreateAccount>
+                <Text>Create</Text>
+            </CreateAccount>
         </Container>
     );
 }
