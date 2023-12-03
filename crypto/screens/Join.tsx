@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import {ActivityIndicator, Alert, Dimensions, TextInput} from "react-native";
 import styled from "styled-components/native";
 import {Black} from "../colors";
-import {CreateAccount, Email, Password} from "../components/Buttons";
+import {SubmitButton, Email, Password} from "../components/Buttons";
 import auth from "@react-native-firebase/auth";
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
@@ -87,13 +87,13 @@ export default function Join() {
                 onSubmitEditing={createAccount}
             />
 
-            <CreateAccount onPress={createAccount}>
+            <SubmitButton onPress={createAccount}>
                 {!loading ? (
                     <Text>Create</Text>
                 ) : (
                     <ActivityIndicator color="white" />
                 )}
-            </CreateAccount>
+            </SubmitButton>
         </Container>
     );
 }

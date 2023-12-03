@@ -22,7 +22,7 @@ export const Password = styled.TextInput`
     margin-bottom: 10px;
 `;
 
-export const CreateAccount = styled.TouchableOpacity`
+export const SubmitButton = styled.TouchableOpacity`
     width: 100%;
     height: 40px;
     border: none;

@@ -1,8 +1,9 @@
 import React, {useRef, useState} from "react";
 import styled from "styled-components/native";
 import {Black} from "../colors";
-import {Dimensions} from "react-native";
-import {Email, Password} from "../components/Buttons";
+import {ActivityIndicator, Alert, Dimensions} from "react-native";
+import {Email, Password, SubmitButton} from "../components/Buttons";
+import auth from "@react-native-firebase/auth";
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
@@ -37,13 +38,32 @@ const Wrapper = styled.View`
     align-items: center;
 `;
 
+const LoginText = styled.Text`
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+`;
+
 export default function Login({navigation: {navigate}}: any) {
     const passwordInput = useRef<any>();
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     function setPasswordFoucs() {
         passwordInput.current.focus();
+    }
+
+    async function logIn() {
+        setLoading(true);
+        try {
+            await auth().signInWithEmailAndPassword(email, password);
+        } catch (e: any) {
+            Alert.alert(e.code);
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -67,7 +87,16 @@ export default function Login({navigation: {navigate}}: any) {
                 returnKeyType="done"
                 value={password}
                 onChangeText={text => setPassword(text)}
+                onSubmitEditing={logIn}
             />
+            <SubmitButton onPress={logIn}>
+                {!loading ? (
+                    <LoginText>Log in</LoginText>
+                ) : (
+                    <ActivityIndicator color="white" />
+                )}
+            </SubmitButton>
+
             <Wrapper>
                 <Text>Don't have an account yet? </Text>
                 <Button onPress={() => navigate("Join")}>
