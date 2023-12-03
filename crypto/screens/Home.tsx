@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {ActivityIndicator, Dimensions, FlatList} from "react-native";
+import {ActivityIndicator, Dimensions, FlatList, View} from "react-native";
 import styled from "styled-components/native";
 import auth from "@react-native-firebase/auth";
 import {useQuery} from "react-query";
 import {ICoin, getCoins} from "../api";
 import {Black} from "../colors";
+import Coin from "../components/Coin";
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
@@ -19,18 +20,6 @@ const Loader = styled.View`
     justify-content: center;
     align-items: center;
     background-color: ${Black};
-`;
-
-const Coin = styled.View`
-    align-items: center;
-`;
-
-const CoinName = styled.Text`
-    color: whitesmoke;
-`;
-
-const CoinSymbol = styled.Text`
-    color: whitesmoke;
 `;
 
 export default function Home() {
@@ -63,14 +52,17 @@ export default function Home() {
         <Container>
             <FlatList
                 data={cleanData}
-                renderItem={({item}) => (
-                    <Coin>
-                        <CoinName>{item.name}</CoinName>
-                        <CoinSymbol>{item.symbol}</CoinSymbol>
-                    </Coin>
+                renderItem={({item, index}) => (
+                    <Coin index={index} item={item} />
                 )}
-                numColumns={5}
+                numColumns={3}
                 keyExtractor={item => item.id}
+                columnWrapperStyle={{
+                    justifyContent: "space-between",
+                }}
+                ItemSeparatorComponent={() => (
+                    <View style={{height: 10}}></View>
+                )}
             />
         </Container>
     );
