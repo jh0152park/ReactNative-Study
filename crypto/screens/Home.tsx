@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {ActivityIndicator, Dimensions, FlatList, View} from "react-native";
+import {
+    ActivityIndicator,
+    Button,
+    Dimensions,
+    FlatList,
+    Text,
+    View,
+} from "react-native";
 import styled from "styled-components/native";
 import auth from "@react-native-firebase/auth";
 import {useQuery} from "react-query";
