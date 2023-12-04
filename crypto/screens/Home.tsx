@@ -12,7 +12,7 @@ const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 const Container = styled.View`
     flex: 1;
     background-color: ${Black};
-    padding: ${SCREEN_HEIGHT * 0.1}px ${SCREEN_WIDTH * 0.05}px;
+    padding: ${SCREEN_HEIGHT * 0.05}px ${SCREEN_WIDTH * 0.05}px;
 `;
 
 const Loader = styled.View`
