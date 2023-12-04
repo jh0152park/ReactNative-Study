@@ -8,6 +8,13 @@ export interface ICoin {
     type: string;
 }
 
+export interface ICoinPrice {
+    timestamp: string;
+    price: number;
+    volume_24h: number;
+    market_cap: number;
+}
+
 const BASE_URL = "https://api.coinpaprika.com/v1/";
 const COINS_URL = `${BASE_URL}/coins`;
 
