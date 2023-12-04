@@ -1,18 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {ActivityIndicator, Text} from "react-native";
 import styled from "styled-components/native";
 import {Icon} from "../components/Coin";
 import {useQuery} from "react-query";
 import {ICoinPrice, coinInfo, coinPrices} from "../api";
 import {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {Black} from "../colors";
-import {
-    VictoryBar,
-    VictoryChart,
-    VictoryLine,
-    VictoryScatter,
-    VictoryTheme,
-} from "victory-native";
+import {VictoryChart, VictoryLine, VictoryScatter} from "victory-native";
 
 type NaviProps = NativeStackScreenProps<any, "Detail">;
 
@@ -73,9 +66,7 @@ export default function Detail({navigation, route}: NaviProps) {
                         style={{data: {fill: "#1abc9c"}}}
                     />
                 </VictoryChart>
-            ) : (
-                <ActivityIndicator color="white" />
-            )}
+            ) : null}
         </Container>
     );
 }
