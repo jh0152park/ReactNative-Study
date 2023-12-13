@@ -201,6 +201,10 @@ function App() {
 
 # 6. Loop and Many Interpolations
 
+
+https://github.com/jh0152park/ReactNative-Study/assets/118165975/da318880-df16-437d-9582-b1768e0e41a8
+
+
 ```JS
 function App() {
     const POSITION = useRef(
