@@ -63,9 +63,7 @@ function App() {
 
 # 3. Simple Move Up and Down
 
-
 https://github.com/jh0152park/ReactNative-Study/assets/118165975/e587d4b5-b316-4548-9ae7-ad5c91e77a03
-
 
 ```JS
 function App() {
@@ -88,6 +86,51 @@ function App() {
             <TouchableOpacity onPress={moveUp}>
                 <AnimatedBox style={{transform: [{translateY: Y}]}} />
             </TouchableOpacity>
+        </Container>
+    );
+}
+```
+
+# 4. Interpolations
+
+```JS
+function App() {
+    const [up, setUp] = useState(false);
+    const Y_POSITION = useRef(new Animated.Value(250)).current;
+
+    function moveUp() {
+        Animated.timing(Y_POSITION, {
+            toValue: up ? 250 : -250,
+            duration: 2000,
+            useNativeDriver: true,
+        }).start(toggleUp);
+    }
+
+    function toggleUp() {
+        setUp(prev => !prev);
+    }
+
+    const opacityValue = Y_POSITION.interpolate({
+        inputRange: [-250, -100, 100, 250],
+        outputRange: [1, 0.3, 0.3, 1],
+    });
+
+    const borderRadius = Y_POSITION.interpolate({
+        inputRange: [-250, 250],
+        outputRange: [100, 0],
+    });
+
+    return (
+        <Container>
+            <Pressable onPress={moveUp}>
+                <AnimatedBox
+                    style={{
+                        borderRadius: borderRadius,
+                        opacity: opacityValue,
+                        transform: [{translateY: Y_POSITION}],
+                    }}
+                />
+            </Pressable>
         </Container>
     );
 }
