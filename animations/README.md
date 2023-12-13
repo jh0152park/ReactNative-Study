@@ -63,6 +63,10 @@ function App() {
 
 # 3. Simple Move Up and Down
 
+
+https://github.com/jh0152park/ReactNative-Study/assets/118165975/e587d4b5-b316-4548-9ae7-ad5c91e77a03
+
+
 ```JS
 function App() {
     const [up, setUp] = useState(false);
