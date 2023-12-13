@@ -60,3 +60,31 @@ function App() {
     );
 }
 ```
+
+# 3. Simple Move Up and Down
+
+```JS
+function App() {
+    const [up, setUp] = useState(false);
+    const Y = useRef(new Animated.Value(0)).current;
+
+    function moveUp() {
+        Animated.timing(Y, {
+            toValue: up ? 200 : -200,
+            useNativeDriver: true,
+        }).start(toggleUp);
+    }
+
+    function toggleUp() {
+        setUp(prev => !prev);
+    }
+
+    return (
+        <Container>
+            <TouchableOpacity onPress={moveUp}>
+                <AnimatedBox style={{transform: [{translateY: Y}]}} />
+            </TouchableOpacity>
+        </Container>
+    );
+}
+```
