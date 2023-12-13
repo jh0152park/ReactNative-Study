@@ -61,7 +61,7 @@ function App() {
 }
 ```
 
-# 3. Simple Move Up and Down
+# 3. Simple Move Up and Down with callback function
 
 https://github.com/jh0152park/ReactNative-Study/assets/118165975/e587d4b5-b316-4548-9ae7-ad5c91e77a03
 
@@ -93,9 +93,7 @@ function App() {
 
 # 4. Interpolations
 
-
 https://github.com/jh0152park/ReactNative-Study/assets/118165975/1ff4b2da-e7b7-4c24-9451-3da3160cd055
-
 
 ```JS
 function App() {
@@ -142,9 +140,7 @@ function App() {
 
 # 5. More Interpolations
 
-
 https://github.com/jh0152park/ReactNative-Study/assets/118165975/5f26f7cf-e601-423b-bc8e-dc50657726b0
-
 
 ```JS
 function App() {
@@ -195,6 +191,97 @@ function App() {
                             {translateY: Y_POSITION.y},
                             {rotateY: rotation},
                         ],
+                    }}
+                />
+            </Pressable>
+        </Container>
+    );
+}
+```
+
+# 6. Loop and Many Interpolations
+
+```JS
+function App() {
+    const POSITION = useRef(
+        new Animated.ValueXY({
+            x: -SCREEN_WIDTH * 0.5 + 100,
+            y: -SCREEN_HEIGHT * 0.5 + 100,
+        }),
+    ).current;
+
+    const toTopLeft = Animated.timing(POSITION, {
+        toValue: {
+            x: -SCREEN_WIDTH * 0.5 + 100,
+            y: -SCREEN_HEIGHT * 0.5 + 100,
+        },
+        useNativeDriver: true,
+    });
+
+    const toTopright = Animated.timing(POSITION, {
+        toValue: {
+            x: SCREEN_WIDTH * 0.5 - 100,
+            y: -SCREEN_HEIGHT * 0.5 + 100,
+        },
+        useNativeDriver: true,
+    });
+
+    const toBottomLeft = Animated.timing(POSITION, {
+        toValue: {
+            x: -SCREEN_WIDTH * 0.5 + 100,
+            y: SCREEN_HEIGHT * 0.5 - 100,
+        },
+        useNativeDriver: true,
+    });
+
+    const toBottomRight = Animated.timing(POSITION, {
+        toValue: {
+            x: SCREEN_WIDTH * 0.5 - 100,
+            y: SCREEN_HEIGHT * 0.5 - 100,
+        },
+        useNativeDriver: true,
+    });
+
+    function moveUp() {
+        Animated.loop(
+            Animated.sequence([
+                toBottomLeft,
+                toBottomRight,
+                toTopright,
+                toTopLeft,
+            ]),
+        ).start();
+    }
+
+    const opacityValue = POSITION.y.interpolate({
+        inputRange: [-250, -100, 100, 250],
+        outputRange: [1, 0.3, 0.3, 1],
+    });
+
+    const borderRadius = POSITION.y.interpolate({
+        inputRange: [-250, 250],
+        outputRange: [100, 0],
+    });
+
+    const rotation = POSITION.y.interpolate({
+        inputRange: [-250, 250],
+        outputRange: ["-360deg", "360deg"],
+    });
+
+    const backgroundColor = POSITION.y.interpolate({
+        inputRange: [-250, 250],
+        outputRange: ["rgb(230, 255, 1)", "rgb(131, 203, 255)"],
+    });
+
+    return (
+        <Container>
+            <Pressable onPress={moveUp}>
+                <AnimatedBox
+                    style={{
+                        borderRadius: borderRadius,
+                        opacity: opacityValue,
+                        backgroundColor: backgroundColor,
+                        transform: [...POSITION.getTranslateTransform()],
                     }}
                 />
             </Pressable>
