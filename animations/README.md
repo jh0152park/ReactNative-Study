@@ -1,8 +1,8 @@
 # 1. Simple Move
 
+### Should use `useRef` to `new Animate.Value` to prevent refresh by state changed of `useState` or etc.
 
 https://github.com/jh0152park/ReactNative-Study/assets/118165975/837564d3-f212-4213-b73e-364e8a58a12e
-
 
 ```JS
 function App() {
@@ -31,9 +31,9 @@ function App() {
 
 # 2. Simple Move with Bounce
 
+### Should use `useRef` to `new Animate.Value` to prevent refresh by state changed of `useState` or etc.
 
 https://github.com/jh0152park/ReactNative-Study/assets/118165975/9af18ab0-6ffe-4719-940a-72fca39c6dda
-
 
 ```JS
 function App() {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {Animated, TouchableOpacity} from "react-native";
 import styled from "styled-components/native";
 
@@ -17,18 +17,19 @@ const Box = styled.View`
 const AnimatedBox = Animated.createAnimatedComponent(Box);
 
 function App() {
+    const [up, setUp] = useState(false);
     const Y = new Animated.Value(0);
 
     function moveUp() {
         Animated.timing(Y, {
-            toValue: -200,
+            toValue: up ? 200 : -200,
             useNativeDriver: true,
-        }).start();
+        }).start(toggleUp);
     }
 
-    Y.addListener(() => {
-        console.log(Y);
-    });
+    function toggleUp() {
+        setUp(prev => !prev);
+    }
 
     return (
         <Container>
