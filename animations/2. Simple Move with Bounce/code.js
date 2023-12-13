@@ -20,8 +20,9 @@ function App() {
     const Y = new Animated.Value(0);
 
     function moveUp() {
-        Animated.timing(Y, {
+        Animated.spring(Y, {
             toValue: -200,
+            bounciness: 500,
             useNativeDriver: true,
         }).start();
     }
