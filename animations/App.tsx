@@ -19,69 +19,148 @@ const AnimatedBox = Animated.createAnimatedComponent(Box);
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get("window");
 
 function App() {
+    const leftX = -SCREEN_WIDTH * 0.5 + 100;
+    const rightX = SCREEN_WIDTH * 0.5 - 100;
+    const topY = -SCREEN_HEIGHT * 0.5 + 100;
+    const bottomY = SCREEN_HEIGHT * 0.5 - 100;
+    const totalHeight = bottomY - topY;
+    const yStack = totalHeight / 3.5;
+
     const POSITION = useRef(
         new Animated.ValueXY({
-            x: -SCREEN_WIDTH * 0.5 + 100,
-            y: -SCREEN_HEIGHT * 0.5 + 100,
+            x: 0,
+            y: bottomY,
         }),
     ).current;
 
-    const toTopLeft = Animated.timing(POSITION, {
+    const left1 = Animated.timing(POSITION, {
         toValue: {
-            x: -SCREEN_WIDTH * 0.5 + 100,
-            y: -SCREEN_HEIGHT * 0.5 + 100,
+            x: leftX,
+            y: bottomY - yStack,
         },
+        duration: 400,
         useNativeDriver: true,
     });
 
-    const toTopright = Animated.timing(POSITION, {
+    const left2 = Animated.timing(POSITION, {
         toValue: {
-            x: SCREEN_WIDTH * 0.5 - 100,
-            y: -SCREEN_HEIGHT * 0.5 + 100,
+            x: leftX,
+            y: bottomY - yStack * 2,
         },
+        duration: 400,
         useNativeDriver: true,
     });
 
-    const toBottomLeft = Animated.timing(POSITION, {
+    const left3 = Animated.timing(POSITION, {
         toValue: {
-            x: -SCREEN_WIDTH * 0.5 + 100,
-            y: SCREEN_HEIGHT * 0.5 - 100,
+            x: leftX,
+            y: bottomY - yStack * 3,
         },
+        duration: 400,
         useNativeDriver: true,
     });
 
-    const toBottomRight = Animated.timing(POSITION, {
+    const right1 = Animated.timing(POSITION, {
         toValue: {
-            x: SCREEN_WIDTH * 0.5 - 100,
-            y: SCREEN_HEIGHT * 0.5 - 100,
+            x: rightX,
+            y: bottomY - yStack,
         },
+        duration: 400,
+        useNativeDriver: true,
+    });
+
+    const right2 = Animated.timing(POSITION, {
+        toValue: {
+            x: rightX,
+            y: bottomY - yStack * 2,
+        },
+        duration: 400,
+        useNativeDriver: true,
+    });
+
+    const right3 = Animated.timing(POSITION, {
+        toValue: {
+            x: rightX,
+            y: bottomY - yStack * 3,
+        },
+        duration: 400,
+        useNativeDriver: true,
+    });
+
+    const topLeft = Animated.timing(POSITION, {
+        toValue: {
+            x: leftX,
+            y: topY,
+        },
+        duration: 400,
+        useNativeDriver: true,
+    });
+
+    const topRight = Animated.timing(POSITION, {
+        toValue: {
+            x: rightX,
+            y: topY,
+        },
+        duration: 400,
+        useNativeDriver: true,
+    });
+
+    const bottomRight = Animated.timing(POSITION, {
+        toValue: {
+            x: rightX,
+            y: bottomY,
+        },
+        duration: 400,
+        useNativeDriver: true,
+    });
+
+    const bottomLeft = Animated.timing(POSITION, {
+        toValue: {
+            x: leftX,
+            y: bottomY,
+        },
+        duration: 400,
+        useNativeDriver: true,
+    });
+
+    const initPosition = Animated.timing(POSITION, {
+        toValue: {
+            x: 0,
+            y: bottomY,
+        },
+        duration: 400,
         useNativeDriver: true,
     });
 
     function moveUp() {
+        topRight.start();
         Animated.loop(
             Animated.sequence([
-                toBottomLeft,
-                toBottomRight,
-                toTopright,
-                toTopLeft,
+                left1,
+                right2,
+                left3,
+                topRight,
+                left3,
+                right2,
+                left1,
+                bottomRight,
+                left1,
+                right2,
+                left3,
+                topRight,
+                left3,
+                right2,
+                left1,
+                // initPosition,
+                bottomRight,
+                initPosition,
             ]),
         ).start();
     }
 
-    const opacityValue = POSITION.y.interpolate({
-        inputRange: [-250, -100, 100, 250],
-        outputRange: [1, 0.3, 0.3, 1],
-    });
-
-    const borderRadius = POSITION.y.interpolate({
-        inputRange: [-250, 250],
-        outputRange: [100, 0],
-    });
-
-    const rotation = POSITION.y.interpolate({
-        inputRange: [-250, 250],
-        outputRange: ["-360deg", "360deg"],
+    const borderRadius = POSITION.x.interpolate({
+        inputRange: [-SCREEN_WIDTH * 0.5 + 100, SCREEN_WIDTH * 0.5 - 100],
+        outputRange: [100, 10],
     });
 
     const backgroundColor = POSITION.y.interpolate({
@@ -95,7 +174,6 @@ function App() {
                 <AnimatedBox
                     style={{
                         borderRadius: borderRadius,
-                        opacity: opacityValue,
                         backgroundColor: backgroundColor,
                         transform: [...POSITION.getTranslateTransform()],
                     }}
