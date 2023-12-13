@@ -93,6 +93,10 @@ function App() {
 
 # 4. Interpolations
 
+
+https://github.com/jh0152park/ReactNative-Study/assets/118165975/1ff4b2da-e7b7-4c24-9451-3da3160cd055
+
+
 ```JS
 function App() {
     const [up, setUp] = useState(false);
