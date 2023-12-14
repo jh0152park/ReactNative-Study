@@ -74,12 +74,16 @@ export default function App() {
         toValue: -500,
         tension: 10,
         useNativeDriver: true,
+        restSpeedThreshold: 100,
+        restDisplacementThreshold: 100,
     });
 
     const goRight = Animated.spring(position, {
         toValue: 500,
         tension: 10,
         useNativeDriver: true,
+        restSpeedThreshold: 100,
+        restDisplacementThreshold: 100,
     });
 
     const panResponder = useRef(
