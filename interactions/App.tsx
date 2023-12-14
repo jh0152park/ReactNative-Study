@@ -18,15 +18,21 @@ const Card = styled.View`
     align-items: center;
     border-radius: 50px;
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+    position: absolute;
 `;
 const AnimatedCard = Animated.createAnimatedComponent(Card);
+const CardContainer = styled.View`
+    flex: 3;
+    justify-content: center;
+    align-items: center;
+`;
 
 const Button = styled.TouchableOpacity``;
 
 const ButtonContainer = styled.View`
     flex-direction: row;
-    margin-top: 70px;
     gap: 20px;
+    flex: 1;
 `;
 
 export default function App() {
@@ -37,9 +43,14 @@ export default function App() {
         outputRange: ["-30deg", "30deg"],
         extrapolate: "clamp",
     });
+    const secondScale = position.interpolate({
+        inputRange: [-300, 0, 300],
+        outputRange: [1, 0.5, 1],
+        extrapolate: "clamp",
+    });
 
     const onPressDownCard = Animated.spring(scale, {
-        toValue: 0.8,
+        toValue: 0.85,
         useNativeDriver: true,
     });
 
@@ -88,17 +99,26 @@ export default function App() {
 
     return (
         <Container>
-            <AnimatedCard
-                {...panResponder.panHandlers}
-                style={{
-                    transform: [
-                        {scale: scale},
-                        {translateX: position},
-                        {rotateZ: rotation},
-                    ],
-                }}>
-                <Ionicons name="pizza" color="#192a56" size={98} />
-            </AnimatedCard>
+            <CardContainer>
+                <AnimatedCard
+                    style={{
+                        transform: [{scale: secondScale}],
+                    }}>
+                    <Ionicons name="fast-food" color="#192a56" size={98} />
+                </AnimatedCard>
+
+                <AnimatedCard
+                    {...panResponder.panHandlers}
+                    style={{
+                        transform: [
+                            {scale: scale},
+                            {translateX: position},
+                            {rotateZ: rotation},
+                        ],
+                    }}>
+                    <Ionicons name="pizza" color="#192a56" size={98} />
+                </AnimatedCard>
+            </CardContainer>
 
             <ButtonContainer>
                 <Button
