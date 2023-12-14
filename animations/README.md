@@ -366,6 +366,10 @@ function App() {
 
 # 9. PanResponder + Offset
 
+
+https://github.com/jh0152park/ReactNative-Study/assets/118165975/eaa464a1-d712-40ea-a395-f06d65fdf2ea
+
+
 ```JS
 function App() {
     const POSITION = useRef(
