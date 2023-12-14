@@ -2,7 +2,7 @@ import {styled} from "styled-components/native";
 import {Ionicons} from "@expo/vector-icons";
 import {useRef, useState} from "react";
 import {Animated, Easing, PanResponder, View} from "react-native";
-import icons from "./icons";
+import icons from "../icons";
 
 const BLACK = "#1e272e";
 const GREY = "#485460";
