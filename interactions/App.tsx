@@ -1,7 +1,8 @@
 import {Animated, PanResponder} from "react-native";
 import styled from "styled-components/native";
 import {Ionicons} from "@expo/vector-icons";
-import {useRef} from "react";
+import {useRef, useState} from "react";
+import icons from "./icons";
 
 const Container = styled.View`
     flex: 1;
@@ -36,6 +37,10 @@ const ButtonContainer = styled.View`
 `;
 
 export default function App() {
+    // Variables
+    const [index, setIndex] = useState(0);
+
+    // Animation Variables
     const scale = useRef(new Animated.Value(1)).current;
     const position = useRef(new Animated.Value(0)).current;
     const rotation = position.interpolate({
@@ -49,6 +54,7 @@ export default function App() {
         extrapolate: "clamp",
     });
 
+    // Animations
     const onPressDownCard = Animated.spring(scale, {
         toValue: 0.85,
         useNativeDriver: true,
@@ -84,9 +90,9 @@ export default function App() {
             },
             onPanResponderRelease: (e, {dx, dy}) => {
                 if (dx < -230) {
-                    goLeft.start();
+                    goLeft.start(disapeardCardDone);
                 } else if (dx > 230) {
-                    goRight.start();
+                    goRight.start(disapeardCardDone);
                 } else {
                     Animated.parallel([onPressUpCard, goCenter]).start();
                 }
@@ -97,6 +103,13 @@ export default function App() {
         }),
     ).current;
 
+    // functions
+    function disapeardCardDone() {
+        scale.setValue(1);
+        position.setValue(0);
+        setIndex(prev => prev + 1);
+    }
+
     return (
         <Container>
             <CardContainer>
@@ -104,7 +117,11 @@ export default function App() {
                     style={{
                         transform: [{scale: secondScale}],
                     }}>
-                    <Ionicons name="fast-food" color="#192a56" size={98} />
+                    <Ionicons
+                        name={icons[index + 1]}
+                        color="#192a56"
+                        size={98}
+                    />
                 </AnimatedCard>
 
                 <AnimatedCard
@@ -116,14 +133,14 @@ export default function App() {
                             {rotateZ: rotation},
                         ],
                     }}>
-                    <Ionicons name="pizza" color="#192a56" size={98} />
+                    <Ionicons name={icons[index]} color="#192a56" size={98} />
                 </AnimatedCard>
             </CardContainer>
 
             <ButtonContainer>
                 <Button
                     onPress={() => {
-                        goLeft.start();
+                        goLeft.start(disapeardCardDone);
                     }}>
                     <Ionicons
                         name="close-circle-outline"
@@ -133,7 +150,7 @@ export default function App() {
                 </Button>
                 <Button
                     onPress={() => {
-                        goRight.start();
+                        goRight.start(disapeardCardDone);
                     }}>
                     <Ionicons
                         name="checkmark-circle-outline"
