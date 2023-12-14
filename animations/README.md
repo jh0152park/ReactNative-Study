@@ -296,6 +296,10 @@ function App() {
 
 # 8. Pan Responder
 
+
+https://github.com/jh0152park/ReactNative-Study/assets/118165975/d4061cd6-0737-4c1d-8866-ff41f92d941f
+
+
 ## This is help us to know something touch or gesture by user
 
 ### - `panHandler` is sort of a bundle or bunch of many functions, and have to give it to animate components when I want to detect some gestures by user.
