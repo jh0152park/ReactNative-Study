@@ -43,6 +43,19 @@ function App() {
                     y: gestureState.dy,
                 });
             },
+            onPanResponderGrant(e, gestureState) {
+                POSITION.setOffset({
+                    x: POSITION.x._value,
+                    y: POSITION.y._value,
+                });
+            },
+            onPanResponderRelease(e, gestureState) {
+                POSITION.flattenOffset();
+                // POSITION.setValue({
+                //     x: gestureState.dx,
+                //     y: gestureState.dy,
+                // });
+            },
         }),
     ).current;
 
