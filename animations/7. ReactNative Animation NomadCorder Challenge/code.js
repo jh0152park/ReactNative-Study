@@ -133,7 +133,6 @@ function App() {
     });
 
     function moveUp() {
-        topRight.start();
         Animated.loop(
             Animated.sequence([
                 left1,

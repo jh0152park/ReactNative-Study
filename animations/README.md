@@ -289,3 +289,67 @@ function App() {
     );
 }
 ```
+
+# 8. Pan Responder
+
+## This is help us to know something touch or gesture by user
+
+### - `panHandler` is sort of a bundle or bunch of many functions, and have to give it to animate components when I want to detect some gestures by user.
+
+### - If `onStartShouldSetPanResponder` is ture, then panResponder start to listen for touch by user
+
+### - `onPanResponderRelease` is called when the finger is released on screen
+
+### - `onPanResponderMove` is tell us when the finger is moved
+
+```JS
+function App() {
+    const POSITION = useRef(
+        new Animated.ValueXY({
+            x: 0,
+            y: 0,
+        }),
+    ).current;
+
+    const panResponder = useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onPanResponderMove: (e, gestureState) => {
+                // gestureState.dy: delta y position
+                // gestureState.dx: delta x position
+                POSITION.setValue({
+                    x: gestureState.dx,
+                    y: gestureState.dy,
+                });
+            },
+        }),
+    ).current;
+
+    function moveUp() {}
+
+    const borderRadius = POSITION.x.interpolate({
+        inputRange: [-SCREEN_WIDTH * 0.5 + 100, SCREEN_WIDTH * 0.5 - 100],
+        outputRange: [100, 10],
+    });
+
+    const backgroundColor = POSITION.y.interpolate({
+        inputRange: [-250, 250],
+        outputRange: ["rgb(230, 255, 1)", "rgb(131, 203, 255)"],
+    });
+
+    return (
+        <Container>
+            <Pressable onPress={moveUp}>
+                <AnimatedBox
+                    {...panResponder.panHandlers}
+                    style={{
+                        borderRadius: borderRadius,
+                        backgroundColor: backgroundColor,
+                        transform: [...POSITION.getTranslateTransform()],
+                    }}
+                />
+            </Pressable>
+        </Container>
+    );
+}
+```
