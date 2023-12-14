@@ -24,19 +24,49 @@ const AnimatedCard = Animated.createAnimatedComponent(Card);
 export default function App() {
     const scale = useRef(new Animated.Value(1)).current;
     const position = useRef(new Animated.Value(0)).current;
+    const rotation = position.interpolate({
+        inputRange: [-250, 250],
+        outputRange: ["-30deg", "30deg"],
+        extrapolate: "clamp",
+    });
+
+    const onPressDownCard = Animated.spring(scale, {
+        toValue: 0.8,
+        useNativeDriver: true,
+    });
+
+    const onPressUpCard = Animated.spring(scale, {
+        toValue: 1,
+        useNativeDriver: true,
+    });
+
+    const goCenter = Animated.spring(position, {
+        toValue: 0,
+        useNativeDriver: true,
+    });
 
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
             onPanResponderGrant: () => {
-                onPressDownCard();
+                onPressDownCard.start();
             },
-            onPanResponderRelease: () => {
-                onPressUpCard();
-                Animated.spring(position, {
-                    toValue: 0,
-                    useNativeDriver: true,
-                }).start();
+            onPanResponderRelease: (e, {dx, dy}) => {
+                if (dx < -230) {
+                    // disapeard to left
+                    Animated.spring(position, {
+                        toValue: -500,
+                        useNativeDriver: true,
+                    }).start();
+                } else if (dx > 230) {
+                    // disapeard to right
+                    Animated.spring(position, {
+                        toValue: 500,
+                        useNativeDriver: true,
+                    }).start();
+                } else {
+                    Animated.parallel([onPressUpCard, goCenter]).start();
+                }
             },
             onPanResponderMove(e, {dx, dy}) {
                 position.setValue(dx);
@@ -44,26 +74,16 @@ export default function App() {
         }),
     ).current;
 
-    function onPressDownCard() {
-        Animated.spring(scale, {
-            toValue: 0.9,
-            useNativeDriver: true,
-        }).start();
-    }
-
-    function onPressUpCard() {
-        Animated.spring(scale, {
-            toValue: 1,
-            useNativeDriver: true,
-        }).start();
-    }
-
     return (
         <Container>
             <AnimatedCard
                 {...panResponder.panHandlers}
                 style={{
-                    transform: [{scale: scale}, {translateX: position}],
+                    transform: [
+                        {scale: scale},
+                        {translateX: position},
+                        {rotateZ: rotation},
+                    ],
                 }}>
                 <Ionicons name="pizza" color="#192a56" size={98} />
             </AnimatedCard>
