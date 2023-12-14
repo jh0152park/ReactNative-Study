@@ -21,6 +21,14 @@ const Card = styled.View`
 `;
 const AnimatedCard = Animated.createAnimatedComponent(Card);
 
+const Button = styled.TouchableOpacity``;
+
+const ButtonContainer = styled.View`
+    flex-direction: row;
+    margin-top: 70px;
+    gap: 20px;
+`;
+
 export default function App() {
     const scale = useRef(new Animated.Value(1)).current;
     const position = useRef(new Animated.Value(0)).current;
@@ -45,6 +53,18 @@ export default function App() {
         useNativeDriver: true,
     });
 
+    const goLeft = Animated.spring(position, {
+        toValue: -500,
+        tension: 10,
+        useNativeDriver: true,
+    });
+
+    const goRight = Animated.spring(position, {
+        toValue: 500,
+        tension: 10,
+        useNativeDriver: true,
+    });
+
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -53,17 +73,9 @@ export default function App() {
             },
             onPanResponderRelease: (e, {dx, dy}) => {
                 if (dx < -230) {
-                    // disapeard to left
-                    Animated.spring(position, {
-                        toValue: -500,
-                        useNativeDriver: true,
-                    }).start();
+                    goLeft.start();
                 } else if (dx > 230) {
-                    // disapeard to right
-                    Animated.spring(position, {
-                        toValue: 500,
-                        useNativeDriver: true,
-                    }).start();
+                    goRight.start();
                 } else {
                     Animated.parallel([onPressUpCard, goCenter]).start();
                 }
@@ -87,6 +99,29 @@ export default function App() {
                 }}>
                 <Ionicons name="pizza" color="#192a56" size={98} />
             </AnimatedCard>
+
+            <ButtonContainer>
+                <Button
+                    onPress={() => {
+                        goLeft.start();
+                    }}>
+                    <Ionicons
+                        name="close-circle-outline"
+                        size={50}
+                        color={"white"}
+                    />
+                </Button>
+                <Button
+                    onPress={() => {
+                        goRight.start();
+                    }}>
+                    <Ionicons
+                        name="checkmark-circle-outline"
+                        size={50}
+                        color={"white"}
+                    />
+                </Button>
+            </ButtonContainer>
         </Container>
     );
 }
