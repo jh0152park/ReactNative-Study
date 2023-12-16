@@ -26,6 +26,7 @@ const Center = styled.View`
     flex: 3;
     justify-content: center;
     align-items: center;
+    z-index: 10;
 `;
 
 const Button = styled.View`
@@ -51,6 +52,7 @@ const Coin = styled.View`
     justify-content: center;
     align-items: center;
     background-color: ${GREEN};
+    z-index: 10;
 `;
 const AnimatedCoin = Animated.createAnimatedComponent(Coin);
 
@@ -63,6 +65,13 @@ export default function App() {
 
             onPanResponderGrant(e, gestureState) {
                 onPressDown.start();
+            },
+
+            onPanResponderMove(e, gestureState) {
+                POSITION.setValue({
+                    x: gestureState.dx,
+                    y: gestureState.dy,
+                });
             },
 
             onPanResponderRelease(e, gestureState) {
