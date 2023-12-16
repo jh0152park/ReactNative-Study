@@ -80,6 +80,18 @@ export default function App() {
         }),
     ).current;
 
+    const upButtonScale = POSITION.y.interpolate({
+        inputRange: [-300, 0],
+        outputRange: [3, 1],
+        extrapolate: "clamp",
+    });
+
+    const downButtonScale = POSITION.y.interpolate({
+        inputRange: [0, 300],
+        outputRange: [1, 3],
+        extrapolate: "clamp",
+    });
+
     const onPressDown = Animated.spring(SCALE, {
         toValue: 0.8,
         useNativeDriver: true,
@@ -93,7 +105,10 @@ export default function App() {
     return (
         <Container>
             <Edge>
-                <AnimatedButton>
+                <AnimatedButton
+                    style={{
+                        transform: [{scale: upButtonScale}],
+                    }}>
                     <Text color={GREEN}>사다</Text>
                 </AnimatedButton>
             </Edge>
@@ -111,7 +126,10 @@ export default function App() {
                 </Pressable>
             </Center>
             <Edge>
-                <AnimatedButton>
+                <AnimatedButton
+                    style={{
+                        transform: [{scale: downButtonScale}],
+                    }}>
                     <Text color={RED}>팔다</Text>
                 </AnimatedButton>
             </Edge>
