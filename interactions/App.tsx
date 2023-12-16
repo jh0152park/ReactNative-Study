@@ -1,5 +1,6 @@
 import {useRef} from "react";
 import {Animated, PanResponder, Pressable} from "react-native";
+import {get} from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import styled from "styled-components/native";
 
 const BLACK = "#1e272e";
@@ -58,6 +59,7 @@ const AnimatedCoin = Animated.createAnimatedComponent(Coin);
 
 export default function App() {
     const SCALE = useRef(new Animated.Value(1)).current;
+    const OPACITY = useRef(new Animated.Value(1)).current;
     const POSITION = useRef(new Animated.ValueXY({x: 0, y: 0})).current;
     const panResponder = useRef(
         PanResponder.create({
@@ -75,20 +77,29 @@ export default function App() {
             },
 
             onPanResponderRelease(e, gestureState) {
-                onPressUp.start();
+                if (Math.abs(gestureState.dy) >= 210) {
+                    Animated.sequence([
+                        Animated.parallel([scaleZero, opacityZero]),
+                        initCoin,
+                    ]).start(restoreCoin);
+                } else {
+                    onPressUp.start();
+                    backToInit.start();
+                }
+                // Eating TH is 210
             },
         }),
     ).current;
 
     const upButtonScale = POSITION.y.interpolate({
         inputRange: [-300, 0],
-        outputRange: [3, 1],
+        outputRange: [2, 1],
         extrapolate: "clamp",
     });
 
     const downButtonScale = POSITION.y.interpolate({
         inputRange: [0, 300],
-        outputRange: [1, 3],
+        outputRange: [1, 2],
         extrapolate: "clamp",
     });
 
@@ -101,6 +112,51 @@ export default function App() {
         toValue: 1,
         useNativeDriver: true,
     });
+
+    const backToInit = Animated.spring(POSITION, {
+        toValue: {
+            x: 0,
+            y: 0,
+        },
+        useNativeDriver: true,
+    });
+
+    const scaleZero = Animated.timing(SCALE, {
+        toValue: 0,
+        useNativeDriver: true,
+        duration: 100,
+    });
+
+    const opacityZero = Animated.timing(OPACITY, {
+        toValue: 0,
+        useNativeDriver: true,
+        duration: 100,
+    });
+
+    const scaleEnable = Animated.timing(SCALE, {
+        toValue: 1,
+        useNativeDriver: true,
+        duration: 100,
+    });
+
+    const opacityEnable = Animated.timing(OPACITY, {
+        toValue: 1,
+        useNativeDriver: true,
+        duration: 100,
+    });
+
+    const initCoin = Animated.timing(POSITION, {
+        toValue: {
+            x: 0,
+            y: 0,
+        },
+        useNativeDriver: true,
+        duration: 100,
+    });
+
+    function restoreCoin() {
+        Animated.parallel([scaleEnable, opacityEnable]).start();
+    }
 
     return (
         <Container>
@@ -117,6 +173,7 @@ export default function App() {
                     <AnimatedCoin
                         {...panResponder.panHandlers}
                         style={{
+                            opacity: OPACITY,
                             transform: [
                                 ...POSITION.getTranslateTransform(),
                                 {scale: SCALE},
